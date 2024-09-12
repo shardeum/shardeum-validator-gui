@@ -25,7 +25,7 @@ export const loginHandler = [doubleCsrfProtection, async (req: Request, res: Res
   const password = req.body && req.body.password
   const hashedPass = await argon2id.hash(password);
   // Exec the CLI validator login command
-  execFile('operator-cli', ['gui', 'login', hashedPass], (err, stdout, stderr) => {
+  execFile('/usr/local/bin/operator-cli', ['gui', 'login', hashedPass], (err, stdout, stderr) => {
     if (err) {
       cliStderrResponse(res, 'Unable to check login', err.message)
       return
