@@ -24,7 +24,7 @@ const yaml = require('js-yaml')
 export const nodeVersionHandler = asyncRouteHandler(async (req: Request, res: Response<NodeVersionResponse>) => {
   // Exec the CLI dashboard version command
   console.log('executing operator-cli version...');
-  const output = execFileSync('operator-cli', ['version'], { encoding: 'utf8' })
+  const output = execFileSync('/usr/local/bin/operator-cli', ['version'], { encoding: 'utf8' })
   const yamlData: NodeVersionResponse = yaml.load(output);
   res.json(yamlData);
 })
@@ -34,14 +34,14 @@ export default function configureNodeHandlers(apiRouter: Router) {
   apiRouter.post('/node/start', doubleCsrfProtection, asyncRouteHandler(async (req: Request, res: Response) => {
     // Exec the CLI validator start command
     console.log('executing operator-cli start...');
-    execFileSync('operator-cli', ['start']);
+    execFileSync('/usr/local/bin/operator-cli', ['start']);
     res.status(200).json({ status: "ok" })
   }));
 
   apiRouter.post('/node/stop', doubleCsrfProtection, asyncRouteHandler(async (req: Request, res: Response) => {
     // Exec the CLI validator stop command
     console.log('executing operator-cli stop...');
-    execFileSync('operator-cli', ['stop', '-f'])
+    execFileSync('/usr/local/bin/operator-cli', ['stop', '-f'])
     res.status(200).json({ status: "ok" })
   }));
 
@@ -49,7 +49,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
     '/node/status',
     asyncRouteHandler(async (req: Request, res: Response<NodeStatusResponse>) => {
       // Exec the CLI validator stop command
-      execFile('operator-cli', ['status'], (err, stdout, stderr) => {
+      execFile('/usr/local/bin/operator-cli', ['status'], (err, stdout, stderr) => {
         console.log('operator-cli status: ', err, stdout, stderr);
         if (err) {
           cliStderrResponse(res, 'Unable to fetch status', err.message)
@@ -80,7 +80,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
       res.json([])
       return;
     }
-    execFile('ls', ['-m'], { cwd: logsPath }, (err, stdout, stderr) => {
+    execFile('/bin/ls', ['-m'], { cwd: logsPath }, (err, stdout, stderr) => {
       if (err) {
         throw new Error('Unable to get logs', err)
       }
@@ -98,7 +98,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
       res.json({ logsCleared: [] });
       return;
     }
-    execFile('ls', ['-m'], { cwd: logsPath }, (err, stdout, stderr) => {
+    execFile('/bin/ls', ['-m'], { cwd: logsPath }, (err, stdout, stderr) => {
       if (err) {
         throw new Error('Unable to get logs', err)
       }
@@ -130,7 +130,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
         return;
       }
       console.log('executing operator-cli status...');
-      const output = execFileSync('operator-cli', ['stake_info', address], { encoding: 'utf8' })
+      const output = execFileSync('/usr/local/bin/operator-cli', ['stake_info', address], { encoding: 'utf8' })
       try {
         const yamlData = yaml.load(output);
         res.json(yamlData);
@@ -143,9 +143,9 @@ export default function configureNodeHandlers(apiRouter: Router) {
   apiRouter.post(
     '/node/update', doubleCsrfProtection,
     asyncRouteHandler(async (req: Request, res: Response) => {
-      const outUpdate = execFileSync('operator-cli', ['update']);
+      const outUpdate = execFileSync('/usr/local/bin/operator-cli', ['update']);
       console.log('operator-cli update: ', outUpdate);
-      const outGuiRestart = execFileSync('operator-cli', ['gui', 'restart']);
+      const outGuiRestart = execFileSync('/usr/local/bin/operator-cli', ['gui', 'restart']);
       console.log('operator-cli gui restart: ', outGuiRestart);
       res.end();
     })
@@ -158,7 +158,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
     asyncRouteHandler(async (req: Request, res: Response<NodeNetworkResponse>) => {
       // Exec the CLI validator stop command
       console.log('executing operator-cli network-stats');
-      const output = execFileSync('operator-cli', ['network-stats'], { encoding: 'utf8' })
+      const output = execFileSync('/usr/local/bin/operator-cli', ['network-stats'], { encoding: 'utf8' })
       const yamlData = yaml.load(output);
       res.json(yamlData);
     }));
@@ -171,7 +171,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
     }>, res: Response) => {
       const password = req.body && req.body.currentPassword
       const hashedPass = await argon2id.hash(password);
-      const stdout = execFileSync('operator-cli', ['gui', 'login', hashedPass], { encoding: 'utf8' });
+      const stdout = execFileSync('/usr/local/bin/operator-cli', ['gui', 'login', hashedPass], { encoding: 'utf8' });
       const cliResponse = yaml.load(stdout);
 
       if (cliResponse.login !== 'authorized') {
@@ -179,7 +179,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
         return;
       }
 
-      execFileSync('operator-cli', ['gui', 'set', 'password', '-h', req.body.newPassword]);
+      execFileSync('/usr/local/bin/operator-cli', ['gui', 'set', 'password', '-h', req.body.newPassword]);
       res.status(200).json({ status: "ok" })
     }));
 
@@ -190,7 +190,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
   }));
 
   const getSettings = () => {
-    const output = execFileSync('operator-cli', ['node-settings'], { encoding: 'utf8' });
+    const output = execFileSync('/usr/local/bin/operator-cli', ['node-settings'], { encoding: 'utf8' });
     return yaml.load(output);
   }
 
@@ -210,7 +210,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
 
     const currentSettings = getSettings()
     if (autoRestart != currentSettings.autoRestart) {
-      execFileSync('operator-cli', ['set', 'auto_restart', autoRestart]);
+      execFileSync('/usr/local/bin/operator-cli', ['set', 'auto_restart', autoRestart]);
     }
     res.json(getSettings());
   }));
