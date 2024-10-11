@@ -11,7 +11,7 @@ export interface NodeStatus {
     | "waiting-for-network"
     | "ready"
     | "selected";
-  exitStatus: "Exit with warning" | "Exited cleanly" | "Exit with error";
+  exitStatus: ExitStatus;
   exitMessage: string;
   totalTimeValidating: number;
   lastActive: string;
@@ -36,3 +36,5 @@ export interface NodeStatus {
     publicKey: string;
   };
 }
+
+export type ExitStatus =  "Exit with warning" | "Exited cleanly" | "Exit with error"
