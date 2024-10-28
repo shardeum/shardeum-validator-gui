@@ -1,10 +1,10 @@
 import { Card } from "../layouts/Card";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useNodeStatus } from "../../hooks/useNodeStatus";
 import useModalStore from "../../hooks/useModalStore";
 import { AddStakeModal } from "./AddStakeModal";
-import { CHAIN_ID } from "../../pages/_app";
+import { CHAIN_ID } from "../../config/wagmiConfig";
 import { WalletConnectButton } from "./WalletConnectButton";
 import { ConfirmUnstakeModal } from "./ConfirmUnstakeModal";
 import { ClipboardIcon } from "../atoms/ClipboardIcon";
@@ -16,7 +16,7 @@ export const StakeDisplay = () => {
   const addressRef = useRef<HTMLSpanElement>(null);
   const { address, isConnected } = useAccount();
   const { stakeInfo } = useAccountStakeInfo(address);
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { nodeStatus } = useNodeStatus();
   const { settings } = useSettings();
   const { setShowModal, setContent, resetModal } = useModalStore(

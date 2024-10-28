@@ -9,10 +9,10 @@ import {
 } from "@heroicons/react/24/solid";
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { Logo } from "../../components/atoms/Logo";
-import { useAccount, useNetwork, useSwitchNetwork, useDisconnect } from "wagmi";
+import { useAccount, useSwitchChain, useDisconnect, useAccountEffect } from "wagmi";
 import { useNodeStatus } from "../../hooks/useNodeStatus";
-import { fetchBalance } from "@wagmi/core";
-import { CHAIN_ID } from "../_app";
+import { getBalance } from "@wagmi/core";
+import { CHAIN_ID } from "../../config/wagmiConfig";
 import { useDevice } from "../../context/device";
 import { useRouter } from "next/router";
 import { WalletConnectButton } from "../../components/molecules/WalletConnectButton";
@@ -26,6 +26,7 @@ import {
   NotificationSeverity,
   NotificationType,
 } from "../../hooks/useNotificationsStore";
+import { config } from "../../config/wagmiConfig";
 
 const tokensClaimedByKey = "tokensClaimedBy";
 export const onboardingCompletedKey = "onboardingCompleted";
@@ -43,11 +44,13 @@ const Onboarding = () => {
   const [accountBalance, setAccountBalance] = useState("");
   const [chainId, setChainId] = useState(0);
   const [tokenClaimPhase, setTokenClaimPhase] = useState(0); // 0: hasn't claimed yet, 1: initiated request, 2: has claimed
-  const { isConnected, address } = useAccount({
+  const { isConnected, address } = useAccount();
+
+  useAccountEffect({
     onConnect: async (args) => {
       if (args?.address) {
-        const balance = await fetchBalance({
-          address: args?.address,
+        const balance = await getBalance(config, {
+          address: args.address,
           chainId: CHAIN_ID,
         });
         setAccountBalance(`${balance?.formatted} ${balance?.symbol}`);
@@ -71,13 +74,13 @@ const Onboarding = () => {
     setTokenClaimPhase(claimantAddress === address ? 2 : 0);
   }, [address]);
 
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   useEffect(() => {
     setChainId(chain?.id || 0);
   }, [chain?.id]);
 
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
   const router = useRouter();
   const { isMobile } = useDevice();
   const { disconnect } = useDisconnect();
@@ -306,7 +309,7 @@ const Onboarding = () => {
                                   (isConnected ? "bg-primary" : "bg-gray-400")
                                 }
                                 disabled={!isConnected}
-                                onClick={() => switchNetwork?.(CHAIN_ID)}
+                                onClick={() => switchChain?.({chainId: CHAIN_ID})}
                               >
                                 2. Switch to Shardeum Atomium
                               </button>

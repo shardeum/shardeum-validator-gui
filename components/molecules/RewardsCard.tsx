@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import rewardsCardBg from "../../assets/rewards-card.png";
 import { useNodeStatus } from "../../hooks/useNodeStatus";
 import { Card } from "../layouts/Card";
-import { useAccount, useNetwork } from "wagmi";
-import { CHAIN_ID } from "../../pages/_app";
+import { useAccount } from "wagmi";
+import { CHAIN_ID } from "../../config/wagmiConfig";
 import useModalStore from "../../hooks/useModalStore";
 import { ConfirmRedemptionModal } from "./ConfirmRedemptionModal";
 import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
@@ -37,7 +37,7 @@ export const RewardsCard = () => {
   );
   const { nodeStatus } = useNodeStatus();
   const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const [canRedeem, setCanRedeem] = useState(
     isConnected &&
       chain?.id === CHAIN_ID &&

@@ -1,4 +1,4 @@
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import dashboardBg from "../../assets/dashboard-bg.webp";
 import { useAccountStakeInfo } from "../../hooks/useAccountStakeInfo";
 import { useSettings } from "../../hooks/useSettings";
@@ -6,7 +6,7 @@ import { AutoRestartNodeToggle } from "../molecules/AutoRestartNodeToggle";
 import { ForceRemoveStake } from "../molecules/ForceRemoveStake";
 import { ForceStopNode } from "../molecules/ForceStopNode";
 import PasswordResetForm from "../molecules/PasswordResetForm";
-import { CHAIN_ID } from "../../pages/_app";
+import { CHAIN_ID } from "../../config/wagmiConfig";
 import { useNodeStatus } from "../../hooks/useNodeStatus";
 import { useEffect, useState } from "react";
 import { BgImage } from "../atoms/BgImage";
@@ -17,8 +17,7 @@ export const SettingsDisplay = () => {
     updateSettings,
     isLoading: updateSettingsLoading,
   } = useSettings();
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { address, isConnected, chain } = useAccount();
   const { stakeInfo } = useAccountStakeInfo(address);
   const { nodeStatus } = useNodeStatus();
   const [stopDirectly, setStopDirectly] = useState(

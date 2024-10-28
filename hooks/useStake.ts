@@ -4,6 +4,7 @@ import { useTXLogs } from "./useTXLogs";
 import { isMetaMaskError } from "../utils/isMetaMaskError";
 import { isEthersError } from "../utils/isEthersError";
 import { ExternalProvider } from "@ethersproject/providers";
+import { type Address } from 'viem'
 
 type useStakeProps = {
   nominator: string;
@@ -63,7 +64,7 @@ export const useStake = ({ nominator, nominee, stakeAmount, onStake, totalStaked
     try {
       const blobData: string = JSON.stringify({ ...data, nominee: nomineeAddress });
       const provider = new ethers.providers.Web3Provider(
-        ethereum as ExternalProvider
+        ethereum as unknown as ExternalProvider
       );
       const signer = provider.getSigner();
       const [gasPrice, from, nonce] = await Promise.all([
@@ -135,11 +136,16 @@ export const useStake = ({ nominator, nominee, stakeAmount, onStake, totalStaked
   }
 
   useEffect(() => {
-    ethereum?.on?.("accountsChanged", (accounts: string[]) => {
-      setData((currentData) => ({
-        ...currentData,
-        nominator: (accounts?.[0] || "").toLowerCase(),
-      }));
+    ethereum?.on?.("accountsChanged", (accounts: unknown) => {
+      const accountsArray = accounts as Address[];
+      if (accountsArray.length > 0) {
+        setData((currentData) => ({
+          ...currentData,
+          nominator: (accountsArray[0] || "").toLowerCase(),
+        }));
+      } else {
+        console.error('Invalid accounts array:', accounts);
+      }
     });
     setData((currentData) => ({
       ...currentData,

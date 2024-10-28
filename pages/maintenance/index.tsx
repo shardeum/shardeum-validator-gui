@@ -15,10 +15,10 @@ import { useNodePerformance } from "../../hooks/useNodePerformance";
 import { NodeVersion } from "../../model/node-version";
 import React, { useContext, useEffect, useState } from "react";
 import StakeForm from "../../components/StakeForm";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccountStakeInfo } from "../../hooks/useAccountStakeInfo";
-import { CHAIN_ID } from "../_app";
+import { CHAIN_ID } from "../../config/wagmiConfig";
 import LoadingButton from "../../components/LoadingButton";
 import NodeExitStatus from "../../components/NodeExitStatus";
 import { ethers } from "ethers";
@@ -71,12 +71,11 @@ export default function Maintenance() {
 
   const { version, update } = useNodeVersion();
   const { nodeStatus, isLoading, startNode, stopNode } = useNodeStatus();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chain } = useAccount();
   const { stakeInfo } = useAccountStakeInfo(address);
   const { performance } = useNodePerformance();
   const [showStakeForm, setShowStakeForm] = useState<boolean>(false);
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
   const [forceUnstake, setForceUnstake] = useState<boolean>(false);
   const {
     settings,
@@ -352,7 +351,7 @@ export default function Maintenance() {
                     {isConnected && chain?.id !== CHAIN_ID && (
                       <button
                         className="btn btn-primary ml-2"
-                        onClick={() => switchNetwork?.(CHAIN_ID)}
+                        onClick={() => switchChain?.({chainId: CHAIN_ID})}
                       >
                         Switch Network
                         <ArrowRightIcon className="h-5 w-5 inline ml-2" />

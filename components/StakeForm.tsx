@@ -7,6 +7,7 @@ import LoadingButton from "./LoadingButton";
 import { isMetaMaskError } from "../utils/isMetaMaskError";
 import { isEthersError } from "../utils/isEthersError";
 import { ExternalProvider } from "@ethersproject/providers";
+import { type Address } from 'viem'
 
 interface StakeData {
   isInternalTx: boolean;
@@ -71,7 +72,7 @@ export default function StakeForm({
     try {
       const blobData: string = JSON.stringify(data);
       const provider = new ethers.providers.Web3Provider(
-        ethereum as ExternalProvider
+        ethereum as unknown as ExternalProvider
       );
       const signer = provider.getSigner();
       const [gasPrice, from, nonce] = await Promise.all([
@@ -136,11 +137,16 @@ export default function StakeForm({
   }
 
   useEffect(() => {
-    ethereum?.on?.("accountsChanged", (accounts: string[]) => {
-      setData((currentData) => ({
-        ...currentData,
-        nominator: accounts[0].toLowerCase(),
-      }));
+    ethereum?.on?.("accountsChanged", (accounts: unknown) => {
+      const accountsArray = accounts as Address[];
+      if (accountsArray && accountsArray.length > 0) {
+        setData((currentData) => ({
+          ...currentData,
+          nominator: accountsArray[0].toLowerCase(),
+        }));
+      } else {
+        console.error('Invalid accounts array:', accounts);
+      }
     });
     setData((currentData) => ({
       ...currentData,

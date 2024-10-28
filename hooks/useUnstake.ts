@@ -5,7 +5,7 @@ import { useTXLogs } from "./useTXLogs";
 import { isMetaMaskError } from "../utils/isMetaMaskError";
 import { isEthersError } from "../utils/isEthersError";
 import { ExternalProvider } from "@ethersproject/providers";
-import { Address } from 'wagmi';
+import { Address } from 'viem';
 import { showErrorMessage, showSuccessMessage } from "./useToastStore";
 
 type useStakeProps = {
@@ -34,7 +34,7 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
       throw new Error('MetaMask not found');
     }
     try {
-      const provider = new ethers.providers.Web3Provider(ethereum as ExternalProvider);
+      const provider = new ethers.providers.Web3Provider(ethereum as unknown as ExternalProvider);
       const signer = provider.getSigner();
       const [gasPrice, from, nonce] = await Promise.all([
         signer.getGasPrice(),
@@ -106,8 +106,13 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
     timestamp: Date.now()
   });
 
-  ethereum?.on?.("accountsChanged", (accounts: Address[]) => {
-    setData({ ...data, nominator: accounts[0] });
+  ethereum?.on?.("accountsChanged", (accounts: unknown) => {
+    const accountsArray = accounts as Address[];
+    if (accountsArray.length > 0) {
+      setData({ ...data, nominator: accountsArray[0] });
+    } else {
+      console.error('Invalid accounts array:', accounts);
+    }
   });
 
   const handleRemoveStake = async () => {

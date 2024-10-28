@@ -7,10 +7,10 @@ import LoadingButton from './LoadingButton';
 import { ConfirmModalContext } from './ConfirmModalContextProvider';
 import { isMetaMaskError } from '../utils/isMetaMaskError';
 import { isEthersError } from '../utils/isEthersError';
-import { Address } from 'wagmi';
 import { ExternalProvider } from '@ethersproject/providers';
 import { NodeStatus } from '../model/node-status'
 import { useSettings } from "../hooks/useSettings";
+import { Address } from 'viem'
 
 export default function RemoveStakeButton({nominee, force = false, nodeStatus}: { nominee: string, force?: boolean, nodeStatus: NodeStatus['state'] }) {
   const {showTemporarySuccessMessage, showErrorDetails, showTemporaryWarningMessage} = useContext(ToastContext);
@@ -35,7 +35,7 @@ export default function RemoveStakeButton({nominee, force = false, nodeStatus}: 
       throw new Error('MetaMask not found');
     }
     try {
-      const provider = new ethers.providers.Web3Provider(ethereum as ExternalProvider);
+      const provider = new ethers.providers.Web3Provider(ethereum as unknown as ExternalProvider);
       const signer = provider.getSigner();
       const [gasPrice, from, nonce] = await Promise.all([
         signer.getGasPrice(),
@@ -106,12 +106,15 @@ export default function RemoveStakeButton({nominee, force = false, nodeStatus}: 
       }
       const accounts = await ethereum.request({
         method: "eth_requestAccounts"
-      });
+      }) as Address[];
+      if (accounts && accounts.length > 0) {
+        setAccountAddress(accounts[0]);
 
-      setAccountAddress(accounts[0]);
-
-      console.log("Account2: ", accountAddress);
-      await sendTransaction(accounts[0], nominee, force);
+        console.log("Account2: ", accountAddress);
+        await sendTransaction(accounts[0], nominee, force);
+      } else {
+        console.error('Invalid accounts array:', accounts);
+      }
     } catch (error) {
       setLoading(false);
     }
@@ -125,8 +128,13 @@ export default function RemoveStakeButton({nominee, force = false, nodeStatus}: 
     timestamp: Date.now()
   });
 
-  ethereum?.on?.("accountsChanged", (accounts: Address[]) => {
-    setData({...data, nominator: accounts[0]});
+  ethereum?.on?.("accountsChanged", (args: unknown) => {
+    const accounts = args as Address[]; 
+    if (accounts && accounts.length > 0) {
+      setData({...data, nominator: accounts[0]});
+    } else {
+      console.error('Invalid accounts array:', accounts);
+    }
   });
 
   async function removeStake() {
