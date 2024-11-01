@@ -40,16 +40,17 @@ export const RewardsCard = () => {
   const { chain } = useNetwork();
   const [canRedeem, setCanRedeem] = useState(
     isConnected &&
-      chain?.id === CHAIN_ID &&
-      nodeStatus?.state === "stopped" &&
-      parseFloat(nodeStatus?.lockedStake || "0") > 0
+    chain?.id === CHAIN_ID &&
+    nodeStatus?.state === "stopped" &&
+    parseFloat(nodeStatus?.lockedStake || "0") > 0 &&
+    nodeStatus?.unstakable?.canUnstake
   );
   useEffect(() => {
     setCanRedeem(
       isConnected &&
-        chain?.id === CHAIN_ID &&
-        nodeStatus?.state === "stopped" &&
-        parseFloat(nodeStatus?.lockedStake || "0") > 0
+      chain?.id === CHAIN_ID &&
+      nodeStatus?.state === "stopped" &&
+      parseFloat(nodeStatus?.lockedStake || "0") > 0
     );
   }, [nodeStatus?.state, nodeStatus?.lockedStake, isConnected, chain?.id]);
 
@@ -91,9 +92,8 @@ export const RewardsCard = () => {
                 `border border-gray-400 mt-3 px-3 py-1 text-sm rounded ` +
                 (canRedeem
                   ? "text-primary"
-                  : `text-gray-400 ${
-                      nodeStatus?.state === "active" ? "tooltip" : ""
-                    }`)
+                  : `text-gray-400 ${nodeStatus?.state === "active" ? "tooltip" : ""
+                  }`)
               }
               data-tip="It is not possible to redeem rewards while you are validating.
               If absolutely necessary, use the force stop option in settings (Not Recommended)."
