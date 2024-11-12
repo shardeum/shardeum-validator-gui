@@ -3,24 +3,19 @@ import { NodePerformance } from "./node-performance";
 export interface NodeStatus {
   performance: NodePerformance;
   state:
-  | "active"
-  | "standby"
-  | "stopped"
-  | "syncing"
-  | "need-stake"
-  | "waiting-for-network"
-  | "ready"
-  | "selected";
+    | "active"
+    | "standby"
+    | "stopped"
+    | "syncing"
+    | "need-stake"
+    | "waiting-for-network"
+    | "ready"
+    | "selected";
   exitStatus: "Exit with warning" | "Exited cleanly" | "Exit with error";
   exitMessage: string;
   totalTimeValidating: number;
   lastActive: string;
   lockedStake: string;
-  unstakable: {
-    canUnstake: boolean;
-    reason: string,
-    remainingTime: number,
-  };
   stakeAddress: string;
   stakeRequirement: string;
   nominatorAddress: string;
