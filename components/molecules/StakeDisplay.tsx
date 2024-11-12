@@ -10,6 +10,7 @@ import { ConfirmUnstakeModal } from "./ConfirmUnstakeModal";
 import { ClipboardIcon } from "../atoms/ClipboardIcon";
 import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
 import { useAccountStakeInfo } from "../../hooks/useAccountStakeInfo";
+import { useSettings } from "../../hooks/useSettings";
 
 export const StakeDisplay = () => {
   const addressRef = useRef<HTMLSpanElement>(null);
@@ -17,6 +18,7 @@ export const StakeDisplay = () => {
   const { stakeInfo } = useAccountStakeInfo(address);
   const { chain } = useNetwork();
   const { nodeStatus } = useNodeStatus();
+  const { settings } = useSettings();
   const { setShowModal, setContent, resetModal } = useModalStore(
     (state: any) => ({
       setShowModal: state.setShowModal,
@@ -29,7 +31,7 @@ export const StakeDisplay = () => {
   const minimumStakeRequirement = useMemo(() => {
     return Math.max(
       parseFloat(nodeStatus?.stakeRequirement || "10") -
-      parseFloat(nodeStatus?.lockedStake || "0"),
+        parseFloat(nodeStatus?.lockedStake || "0"),
       0
     );
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake]);
@@ -41,6 +43,14 @@ export const StakeDisplay = () => {
       setHasNodeStopped(false);
     }
   }, [nodeStatus?.state]);
+
+  const { isStoppedForLongerThan15Minutes, remainingWaitTime } = useMemo(() => {
+    if (!settings?.lastStopped) return { isStoppedForLongerThan15Minutes: false, remainingWaitTime: 0 };
+    const timeDifference = Date.now() - settings.lastStopped;
+    const isStoppedForLongerThan15Minutes = timeDifference > 15 * 60 * 1000;
+    const remainingWaitTime = Math.max(15 * 60 * 1000 - timeDifference, 0);
+    return { isStoppedForLongerThan15Minutes, remainingWaitTime };
+  }, [settings?.lastStopped]);
 
   const formatRemainingTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
@@ -93,24 +103,22 @@ export const StakeDisplay = () => {
                     className={`
                       bg-white border border-bodyFg text-sm px-3 py-2 rounded basis-0 grow 
                       ${hasNodeStopped && parseFloat(nodeStatus?.lockedStake || "0") > 0
-                        ? nodeStatus?.unstakable?.canUnstake
+                        ? isStoppedForLongerThan15Minutes
                           ? "text-primary"
                           : "text-yellow-500"
                         : "text-gray-400"
                       }
-                      ${!nodeStatus?.unstakable?.canUnstake && parseFloat(nodeStatus?.lockedStake || "0") > 0 ? "tooltip tooltip-bottom" : ""}
+                      ${!isStoppedForLongerThan15Minutes && parseFloat(nodeStatus?.lockedStake || "0") > 0 ? "tooltip tooltip-bottom" : ""}
                     `}
-                    data-tip={(
-                      hasNodeStopped &&
-                      nodeStatus?.unstakable?.canUnstake === false &&
-                      nodeStatus?.unstakable?.remainingTime > 0)
-                        ? `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(nodeStatus.unstakable.remainingTime)} before you can remove your stake.`
+                    data-tip={
+                      hasNodeStopped && !isStoppedForLongerThan15Minutes
+                        ? `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(remainingWaitTime)} before you can remove your stake.`
                         : "It is not recommended to unstake while validating. If absolutely necessary, use the force remove option in settings to remove stake (Not Recommended)."
                     }
                     disabled={
                       !hasNodeStopped ||
                       parseFloat(nodeStatus?.lockedStake || "0") === 0 ||
-                      !nodeStatus?.unstakable
+                      !isStoppedForLongerThan15Minutes
                     }
                     onClick={() => {
                       resetModal();
