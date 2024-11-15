@@ -56,7 +56,7 @@ export const SettingsDisplay = () => {
             }
             nominator={address?.toString() || ""}
             nominee={stakeInfo?.nominee || ""}
-            currentRewards={parseFloat(nodeStatus?.currentRewards || "0")}
+            currentRewards={parseFloat(stakeInfo?.rewards ?? nodeStatus?.currentRewards ?? "0")}
             currentStake={parseFloat(stakeInfo?.stake || "0")}
           />
         )}

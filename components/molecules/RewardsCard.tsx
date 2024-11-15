@@ -8,6 +8,7 @@ import useModalStore from "../../hooks/useModalStore";
 import { ConfirmRedemptionModal } from "./ConfirmRedemptionModal";
 import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
 import { BgImage } from "../atoms/BgImage";
+import {useAccountStakeInfo} from '../../hooks/useAccountStakeInfo';
 
 function formatDate(date: Date) {
   // Format date and time separately
@@ -37,13 +38,14 @@ export const RewardsCard = () => {
   );
   const { nodeStatus } = useNodeStatus();
   const { address, isConnected } = useAccount();
+  const { stakeInfo } = useAccountStakeInfo(address);
   const { chain } = useNetwork();
   const [canRedeem, setCanRedeem] = useState(
     isConnected &&
     chain?.id === CHAIN_ID &&
     nodeStatus?.state === "stopped" &&
     parseFloat(nodeStatus?.lockedStake || "0") > 0 &&
-    nodeStatus?.unstakable?.canUnstake
+    nodeStatus?.stakeState?.canUnstake
   );
   useEffect(() => {
     setCanRedeem(
@@ -63,7 +65,7 @@ export const RewardsCard = () => {
               <div className="flex flex-col w-full gap-y-2">
                 <span className="font-semibold text-2xl flex gap-x-2">
                   <span>
-                    {parseFloat(nodeStatus?.currentRewards || "0").toFixed(2)}{" "}
+                    {parseFloat(stakeInfo?.rewards ?? nodeStatus?.currentRewards ?? "0").toFixed(2)}{" "}
                     SHM
                   </span>
                   {/* <span className="text-xs leading-9 bodyFg">(~0.00$)</span> */}
@@ -107,10 +109,8 @@ export const RewardsCard = () => {
                   >
                     <ConfirmRedemptionModal
                       nominator={address?.toString() || ""}
-                      nominee={nodeStatus?.nomineeAddress || ""}
-                      currentRewards={parseFloat(
-                        nodeStatus?.currentRewards || "0"
-                      )}
+                      nominee={stakeInfo?.nominee ?? nodeStatus?.nomineeAddress ?? ""}
+                      currentRewards={parseFloat(stakeInfo?.rewards ?? nodeStatus?.currentRewards ?? "0")}
                       currentStake={parseFloat(nodeStatus?.lockedStake || "0")}
                     ></ConfirmRedemptionModal>
                   </MobileModalWrapper>
