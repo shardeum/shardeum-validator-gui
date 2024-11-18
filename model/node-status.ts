@@ -16,7 +16,7 @@ export interface NodeStatus {
   totalTimeValidating: number;
   lastActive: string;
   lockedStake: string;
-  unstakable: {
+  stakeState: {
     canUnstake: boolean;
     reason: string,
     remainingTime: number,

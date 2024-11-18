@@ -20,7 +20,6 @@ import useNotificationsStore from "../../hooks/useNotificationsStore";
 import { ToastWindow } from "../../components/molecules/ToastWindow";
 import { useDevice } from "../../context/device";
 import { NodeStatusRibbon } from "../../components/molecules/NodeStatusRibbon";
-import { useAccount } from "wagmi";
 import { MobileModalWrapper } from "../../components/layouts/MobileModalWrapper";
 import useModalStore from "../../hooks/useModalStore";
 import { MobileMenu } from "../../components/molecules/MobileMenu";
@@ -53,7 +52,6 @@ const Dashboard = () => {
     setContentPane(Content.LOGS);
   };
   const { isMobile } = useDevice();
-  const { isConnected } = useAccount();
   const { setShowModal, setContent } = useModalStore((state: any) => ({
     setShowModal: state.setShowModal,
     setContent: state.setContent,
