@@ -69,7 +69,7 @@ export const OverviewSidebar: React.FC = () => {
                 }`}
                 data-tip={`Your GUI version is out of date. Please update to the latest version (${version?.latestCliVersion})`}
               >
-                GUI Version <u>{version?.runningCliVersion}</u>
+                GUI Version <u>{version?.runningGuiVersion}</u>
               </span>
             </div>
             <div className="flex items-center gap-x-2">
