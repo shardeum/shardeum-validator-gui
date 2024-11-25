@@ -44,7 +44,7 @@ if (isDev) {
   app.use(cookieParser());
   setSecurityHeaders(app);
   app.get('/csrf-token', generateTokenHandler)
-  app.post('/auth/login', loginHandler)
+  app.post('/auth/login', loginAttemptLimiter, loginHandler)
   app.post('/auth/logout', logoutHandler)
   app.use('/api', jwtMiddleware, apiRouter)
   app.get('/node/version', nodeVersionHandler)
