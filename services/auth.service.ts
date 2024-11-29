@@ -26,14 +26,16 @@ const login = async (apiBase: string, password: string) => {
     body: JSON.stringify({ password: sha256digest }),
     credentials: 'include',
   });
-  await res.json();
   if (!res.ok) {
     if (res.status === 403) {
       throw new Error('The password you’ve entered is invalid. Please enter the correct password');
+    } else if (res.status === 429) {
+      throw new Error('Too many login attempts from this IP, please try again after 20 minutes');
     } else {
       throw new Error('Something went wrong. Please try again later.');
     }
   }
+  await res.json();
   localStorage.setItem(isLoggedInKey, 'true');
 
   const isFirstTimeUserFlagPresent = localStorage.getItem(isFirstTimeUserKey);
