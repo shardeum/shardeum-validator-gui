@@ -45,7 +45,7 @@ export const RewardsCard = () => {
     chain?.id === CHAIN_ID &&
     nodeStatus?.state === "stopped" &&
     parseFloat(nodeStatus?.lockedStake || "0") > 0 &&
-    nodeStatus?.stakeState?.canUnstake
+    nodeStatus?.stakeState?.unlocked
   );
   useEffect(() => {
     setCanRedeem(

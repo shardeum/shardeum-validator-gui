@@ -49,7 +49,8 @@ export const StakeDisplay = () => {
 
   const isRemoveButtonDisabled = !hasStakeOnDifferentNode && (
       !hasNodeStopped ||
-      !nodeStatus?.stakeState) ||
+      !nodeStatus?.stakeState ||
+      !nodeStatus?.stakeState.unlocked) ||
     stakeForConnectedAddressOrNode === 0;
   
   return (
@@ -96,7 +97,7 @@ export const StakeDisplay = () => {
                       className={`
                         bg-white border border-bodyFg text-sm px-3 py-2 rounded basis-0 grow 
                         ${!isRemoveButtonDisabled
-                        ? nodeStatus?.stakeState?.canUnstake
+                        ? nodeStatus?.stakeState?.unlocked
                             ? "text-primary"
                             : "text-yellow-500"
                           : "text-gray-400"
@@ -105,7 +106,7 @@ export const StakeDisplay = () => {
                       `}
                       data-tip={(
                         hasNodeStopped &&
-                        nodeStatus?.stakeState?.canUnstake === false &&
+                        nodeStatus?.stakeState?.unlocked === false &&
                         nodeStatus?.stakeState?.remainingTime > 0)
                           ? `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(nodeStatus.stakeState.remainingTime)} before you can remove your stake.`
                           : "It is not recommended to unstake while validating. If absolutely necessary, use the force remove option in settings to remove stake (Not Recommended)."
