@@ -72,7 +72,7 @@ export const StakeDisplay = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-x-1">
                 <span className="font-light text-xs" ref={addressRef}>
-                  {address}
+                  {nodeStatus?.nominatorAddress != null && nodeStatus?.nominatorAddress !== '' ? nodeStatus?.nominatorAddress : address}
                 </span>
               </div>
               <button
