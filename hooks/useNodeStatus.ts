@@ -24,9 +24,9 @@ export const useNodeStatus = (): NodeStatusResponse => {
     useState<boolean>(false);
 
   useEffect(() => {
-    if (data?.stakeState?.canUnstake && !hasShownUnstakeNotification) {
+    if (data?.stakeState?.unlocked && !hasShownUnstakeNotification) {
       setHasShownUnstakeNotification(true);
-    } else if (!data?.stakeState?.canUnstake && hasShownUnstakeNotification) {
+    } else if (!data?.stakeState?.unlocked && hasShownUnstakeNotification) {
       setHasShownUnstakeNotification(false);
     }
   }, [data]);
