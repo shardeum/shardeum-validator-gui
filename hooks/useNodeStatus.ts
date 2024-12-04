@@ -59,6 +59,7 @@ export const useNodeStatus = (): NodeStatusResponse => {
     stopNode,
     isLoading,
     notifyUnstake: hasShownUnstakeNotification,
+  };
 }
 
 
