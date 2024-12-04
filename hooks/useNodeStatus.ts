@@ -1,17 +1,18 @@
 import useSWR from 'swr'
 import { fetcher } from './fetcher'
 import { NodeStatus } from '../model/node-status'
-import { useContext, useState } from 'react'
-import { useGlobals } from '../utils/globals'
-import { FetcherContext } from '../components/FetcherContextProvider';
-import { showErrorMessage } from './useToastStore'
+import { useContext, useEffect, useState } from "react";
+import { useGlobals } from "../utils/globals";
+import { FetcherContext } from "../components/FetcherContextProvider";
+import { showErrorMessage } from "./useToastStore";
 
 type NodeStatusResponse = {
   nodeStatus: NodeStatus | undefined;
   startNode: Function;
   stopNode: Function;
   isLoading: boolean;
-}
+  notifyUnstake: boolean;
+};
 
 export const useNodeStatus = (): NodeStatusResponse => {
   const { apiBase } = useGlobals()
@@ -19,6 +20,16 @@ export const useNodeStatus = (): NodeStatusResponse => {
   const fetcherWithContext = useContext(FetcherContext);
   const { data, mutate } = useSWR<NodeStatus>(nodeStatusApi, fetcherWithContext, { refreshInterval: 1000 })
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [hasShownUnstakeNotification, setHasShownUnstakeNotification] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (data?.stakeState?.canUnstake && !hasShownUnstakeNotification) {
+      setHasShownUnstakeNotification(true);
+    } else if (!data?.stakeState?.canUnstake && hasShownUnstakeNotification) {
+      setHasShownUnstakeNotification(false);
+    }
+  }, [data]);
 
   const startNode = async (): Promise<void> => {
     setIsLoading(true)
@@ -46,8 +57,8 @@ export const useNodeStatus = (): NodeStatusResponse => {
     nodeStatus: data,
     startNode,
     stopNode,
-    isLoading
-  }
+    isLoading,
+    notifyUnstake: hasShownUnstakeNotification,
 }
 
 

@@ -216,7 +216,8 @@ export const getDurationBreakdownString = (duration: number) => {
 };
 
 export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
-  const { nodeStatus, isLoading, startNode, stopNode } = useNodeStatus();
+  const { nodeStatus, isLoading, startNode, stopNode, notifyUnstake } =
+    useNodeStatus();
   // const { nodeStatusHistory } = useNodeStatusHistory(address || "");
 
   const state: NodeState = getNodeState(nodeStatus);
@@ -401,6 +402,21 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
       localStorage.setItem(previousNodeStateKey, currentNodeState || "");
     }
   }, [nodeStatus?.state, currentStatus]);
+
+  useEffect(() => {
+    if (notifyUnstake) {
+      setCurrentToast({
+        severity: ToastSeverity.SUCCESS,
+        title: "Node can be unstaked",
+        description: "Your node can now be unstaked.",
+        followupNotification: {
+          type: NotificationType.UNSTAKE_STATUS,
+          severity: NotificationSeverity.SUCCESS,
+          title: "Your node can now be unstaked.",
+        },
+      });
+    }
+  }, [notifyUnstake, setCurrentToast]);
 
   const toggleShowMoreInfo = () => {
     setShowMoreInfo((prevState: boolean) => !prevState);
