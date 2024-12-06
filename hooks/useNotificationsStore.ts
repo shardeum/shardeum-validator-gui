@@ -5,7 +5,8 @@ export enum NotificationType {
   NODE_STATUS = "NODE_STATUS",
   ERROR = "ERROR",
   REWARD = "REWARD",
-  VERSION_UPDATE = "VERSION_UPDATE"
+  VERSION_UPDATE = "VERSION_UPDATE",
+  UNSTAKE_STATUS = "UNSTAKE_STATUS",
 }
 
 export enum NotificationSeverity {
