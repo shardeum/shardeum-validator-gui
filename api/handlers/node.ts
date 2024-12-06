@@ -129,7 +129,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
         badRequestResponse(res, 'No address provided');
         return;
       }
-      console.log('executing operator-cli status...');
+      console.log('Executing operator-cli stake_info...');
       const output = execFileSync('operator-cli', ['stake_info', address], { encoding: 'utf8' })
       try {
         const yamlData = yaml.load(output);
