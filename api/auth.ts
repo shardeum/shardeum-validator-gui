@@ -6,7 +6,6 @@ import rateLimit from 'express-rate-limit';
 const yaml = require('js-yaml')
 const jwt = require('jsonwebtoken')
 import { doubleCsrfProtection } from './csrf';
-import argon2id from 'argon2';
 
 function isValidSecret(secret: unknown) {
   return typeof secret === 'string' && secret.length >= 32;
@@ -23,9 +22,15 @@ crypto.init('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347');
 
 export const loginHandler = [doubleCsrfProtection, async (req: Request, res: Response) => {
   const password = req.body && req.body.password
-  const hashedPass = await argon2id.hash(password);
+
+  // Make sure password is defined and is a string
+  if (!password || typeof password !== 'string') {
+    res.status(400).send({ error: 'Invalid password' })
+    return
+  }
+
   // Exec the CLI validator login command
-  execFile('/usr/local/bin/operator-cli', ['gui', 'login', hashedPass], (err, stdout, stderr) => {
+  execFile('/usr/local/bin/operator-cli', ['gui', 'login', password], (err, stdout, stderr) => {
     if (err) {
       cliStderrResponse(res, 'Unable to check login', err.message)
       return

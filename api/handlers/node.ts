@@ -15,9 +15,7 @@ import path from 'path';
 import { existsSync } from 'fs';
 import asyncRouteHandler from './async-router-handler';
 import fs from 'fs';
-import * as crypto from '@shardus/crypto-utils';
 import { doubleCsrfProtection } from '../csrf';
-import argon2id from 'argon2';
 
 const yaml = require('js-yaml')
 
@@ -170,8 +168,11 @@ export default function configureNodeHandlers(apiRouter: Router) {
       newPassword: string;
     }>, res: Response) => {
       const password = req.body && req.body.currentPassword
-      const hashedPass = await argon2id.hash(password);
-      const stdout = execFileSync('/usr/local/bin/operator-cli', ['gui', 'login', hashedPass], { encoding: 'utf8' });
+      if (!password || typeof password !== 'string') {
+        badRequestResponse(res, 'Invalid password');
+        return;
+      }
+      const stdout = execFileSync('/usr/local/bin/operator-cli', ['gui', 'login', password], { encoding: 'utf8' });
       const cliResponse = yaml.load(stdout);
 
       if (cliResponse.login !== 'authorized') {
