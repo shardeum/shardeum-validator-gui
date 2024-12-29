@@ -6,7 +6,11 @@
     "build": "next build && next export && tsc -project tsconfig.server.json",
     "start": "node build/index.js",
     "lint": "eslint './**/*.ts'",
-    "lint-windows": "eslint ./**/*.ts"
+    "lint-windows": "eslint ./**/*.ts",
+    "release:prerelease": "npm run build && npm version prerelease --preid=prerelease && git push --follow-tags && npm publish --tag prerelease",
+    "release:patch": "npm run build && npm version patch && git push --follow-tags && npm publish",
+    "release:minor": "npm run build && npm version minor && git push --follow-tags && npm publish",
+    "release:major": "npm run build && npm version major && git push --follow-tags && npm publish"
   },
   "dependencies": {
     "@heroicons/react": "2.0.18",
