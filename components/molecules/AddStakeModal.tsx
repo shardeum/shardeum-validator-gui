@@ -126,7 +126,11 @@ export const AddStakeModal = () => {
               onChange={(e) => {
                 const amount = e.target.value;
                 if (amount) {
-                  setStakedAmount(parseFloat(e.target.value));
+                  const trunc = (num: string, pres: number) => {
+                    const split = num.split(".")
+                    return split.length > 1 ? split[0] + "." + split[1].substring(0, pres) : num
+                  }
+                  setStakedAmount(parseFloat(trunc(amount, 15)));
                 }
                 handleStakeChange(e);
               }}
