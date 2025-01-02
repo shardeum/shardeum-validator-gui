@@ -7,6 +7,23 @@ import { useRef, useState } from "react";
 import { SupportDisplay } from "../molecules/SupportDisplay";
 import { NodeStatusUpdate } from "../atoms/NodeStatusUpdate";
 
+function isVersionLessThan(version1?: string, version2?: string): boolean {
+  if (!version1 || !version2) return false;
+
+  const v1Parts = version1.split(".").map(Number);
+  const v2Parts = version2.split(".").map(Number);
+
+  for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
+    const v1Part = v1Parts[i] || 0; // Default to 0 if part is missing
+    const v2Part = v2Parts[i] || 0; // Default to 0 if part is missing
+
+    if (v1Part < v2Part) return true;
+    if (v1Part > v2Part) return false;
+  }
+
+  return false; // Versions are equal
+}
+
 export const OverviewSidebar: React.FC = () => {
   const renderCount = useRef(0);
   renderCount.current = renderCount.current + 1;
@@ -18,8 +35,10 @@ export const OverviewSidebar: React.FC = () => {
 
   const isGuiUpdatePending =
     version?.runningCliVersion !== version?.latestCliVersion;
-  const isValidatorUpdatePending =
-    version?.runnningValidatorVersion !== version?.activeShardeumVersion;
+  const isValidatorUpdatePending = isVersionLessThan(
+    version?.runnningValidatorVersion,
+    version?.minShardeumVersion
+  );
 
   return (
     <div className="flex flex-col gap-y-16 scroll-smooth">
