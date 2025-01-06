@@ -1,5 +1,5 @@
 import { doubleCsrf, type DoubleCsrfCookieOptions } from 'csrf-csrf';
-import * as crypto from '@shardus/crypto-utils';
+import * as crypto from '@shardeum-foundation/lib-crypto-utils';
 import express, { Request, Response, NextFunction } from 'express'
 
 crypto.init('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347');

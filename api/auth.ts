@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { execFile } from 'child_process'
 import { cliStderrResponse, unautorizedResponse } from './handlers/util'
-import * as crypto from '@shardus/crypto-utils';
+import * as crypto from '@shardeum-foundation/lib-crypto-utils';
 import rateLimit from 'express-rate-limit';
 const yaml = require('js-yaml')
 const jwt = require('jsonwebtoken')
