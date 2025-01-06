@@ -1,7 +1,7 @@
 {
   "name": "@shardeum-foundation/shardeum-validator-gui",
   "version": "1.2.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "next build && next export && tsc -project tsconfig.server.json",
     "start": "node build/index.js",
