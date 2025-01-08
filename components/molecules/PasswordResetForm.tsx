@@ -14,6 +14,7 @@ type FormData = {
 function validPassword(password: string) {
   return (
     password.length >= 8 &&
+    password.length <= 128 &&
     /[A-Z]/.test(password) &&
     /[a-z]/.test(password) &&
     /[0-9]/.test(password) &&
@@ -84,13 +85,11 @@ const PasswordResetForm = () => {
       setError(
         `newPassword`,
         {
-          message:
-            "The password does not meet the requirements!",
+          message: "The password does not meet the requirements!",
         },
         { shouldFocus: true }
       );
-    }
-    else if (data.currentPassword == data.newPassword) {
+    } else if (data.currentPassword == data.newPassword) {
       setError(
         `newPassword`,
         { message: "New password is the same as the current password" },
@@ -105,7 +104,7 @@ const PasswordResetForm = () => {
     } else {
       await changePassword(data.currentPassword, data.newPassword);
       resetForm();
-      setIsPasswordReset(true);  // Show success alert
+      setIsPasswordReset(true); // Show success alert
 
       // Hide the alert after 3 seconds
       setTimeout(() => {
@@ -118,8 +117,10 @@ const PasswordResetForm = () => {
     <div className="flex flex-col gap-y-2">
       <span className="font-semibold">Password Reset</span>
       <p className="text-sm text-gray-500">
-        Password requirements: min 8 characters, at least 1 lower case letter, at least 1 upper case letter, at least 1
-        number, at least 1 special character (<span className="text-sm text-gray-400">{"!@#$%^&*()_+*$"}</span>)
+        Password requirements: min 8 characters, max 128 characters, at least 1
+        lower case letter, at least 1 upper case letter, at least 1 number, at
+        least 1 special character (
+        <span className="text-sm text-gray-400">{"!@#$%^&*()_+*$"}</span>)
       </p>
       <Card>
         <form
@@ -130,7 +131,10 @@ const PasswordResetForm = () => {
           {isPasswordReset && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
               <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline"> Your password has been reset successfully.</span>
+              <span className="block sm:inline">
+                {" "}
+                Your password has been reset successfully.
+              </span>
             </div>
           )}
 

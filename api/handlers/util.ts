@@ -23,6 +23,14 @@ export function unautorizedResponse(req: Request, res: Response) {
   })
   console.log(`ERROR HTTP 403: ${req.url}`)
 }
+
+export function notFoundResponse(res: Response, msg: string) {
+  console.log(`ERROR HTTP 404: ${msg}`)
+  res.status(404).json({
+    errorMessage: 'not found',
+  })
+}
+
 export const fetchWithTimeout = (url: string, options: RequestInit, timeout = 5000): any => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {

@@ -8,6 +8,7 @@ import asyncRouteHandler from './handlers/async-router-handler'
 import { fetchWithTimeout } from "./handlers/util";
 const yaml = require('js-yaml')
 import { doubleCsrfProtection } from './csrf';
+import { checkAuthHandler } from './auth';
 
 const ACCOUNT_INFO_URL = process.env.ACCOUNT_INFO_URL ?? "https://explorer-atomium.shardeum.org/api/account";
 // const FAUCET_CLAIM_URL =
@@ -98,6 +99,8 @@ apiRouter.post('/log/unstake', doubleCsrfProtection, (req, res) => {
   })
   res.status(200).json({ status: 'ok' })
 })
+
+apiRouter.get('/auth/check', checkAuthHandler);
 
 // apiRouter.post(
 //   '/claim-tokens',

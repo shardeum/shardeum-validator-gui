@@ -1,20 +1,22 @@
 import { useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/router";
-import { authService } from "../services/auth.service";
+import { authService, checkServerAuth } from "../services/auth.service";
+import { useGlobals } from "../utils/globals";
 
 export default function RouteGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const { apiBase } = useGlobals();
 
   useEffect(() => {
     // on initial load - run auth check
-    authCheck(router.asPath);
+    initialAuthCheck();
 
-    // on route change start - hide page content by setting authorized to false
-    const hideContent = () => setAuthorized(false);
+    // on route change start - hide page content by setting authorized to null
+    const hideContent = () => setAuthorized(null);
     router.events.on("routeChangeStart", hideContent);
 
-    // on route change complete - run auth check
+    // on route change complete - run client-side auth check
     router.events.on("routeChangeComplete", authCheck);
 
     // unsubscribe from events in useEffect return function
@@ -25,6 +27,11 @@ export default function RouteGuard({ children }: { children: ReactNode }) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function initialAuthCheck() {
+    const isServerAuth = await checkServerAuth();
+    authCheck(router.asPath);
+  }
 
   function authCheck(url: string) {
     // redirect to login page if accessing a private page and not logged in

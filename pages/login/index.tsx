@@ -23,9 +23,9 @@ const Login = () => {
     const onboardingCompleted =
       localStorage.getItem(onboardingCompletedKey) === "true";
     if (onboardingCompleted) {
-      router.push("/onboarding");
+      router.replace("/onboarding");
     } else {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }
 

@@ -715,10 +715,6 @@ Onboarding.getLayout = function getLayout(page: ReactElement) {
           name="description"
           content="Dashboard to configure a Shardeum validator"
         />
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; connect-src 'self' https://atomium.shardeum.org/; upgrade-insecure-requests"
-        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -17,7 +17,7 @@ Before setting up the Validator GUI, ensure you have the following components in
 ### 1. Clone the Repository
 
 ```bash
-git clone git@github.com:shardeum/validator-gui.git
+git clone git@github.com:shardeum/validator-gui.git 
 cd validator-gui
 ```
 

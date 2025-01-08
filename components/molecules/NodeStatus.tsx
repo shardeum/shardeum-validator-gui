@@ -26,6 +26,7 @@ export enum NodeState {
   WAITING_FOR_NETWORK = "WAITING_FOR_NETWORK",
   READY = "READY",
   SELECTED = "SELECTED",
+  LOADING = "LOADING",
 }
 
 type DailyNodeStatus = {
@@ -45,7 +46,7 @@ const previousNodeStateKey = "previousNodeState";
 export const getNodeState = (
   nodeStatus: NodeStatusModel | undefined
 ): NodeState => {
-  let nodeState: NodeState = NodeState.STOPPED;
+  let nodeState: NodeState = NodeState.LOADING;
   switch (nodeStatus?.state) {
     case "active":
       nodeState = NodeState.ACTIVE;
@@ -72,7 +73,7 @@ export const getNodeState = (
       nodeState = NodeState.SELECTED;
       break;
     default:
-      nodeState = NodeState.STOPPED;
+      nodeState = NodeState.LOADING;
   }
   return nodeState;
 };
@@ -104,6 +105,9 @@ export const getTitle = (state: NodeState) => {
     case NodeState.SELECTED:
       title = "Selected";
       break;
+    case NodeState.LOADING:
+      title = "Fetching node status...";
+      break;
     default:
       title = "";
   }
@@ -126,6 +130,8 @@ export const getTitleBgColor = (state: NodeState) => {
     case NodeState.SYNCING:
     case NodeState.STANDBY:
       return "attentionBg";
+    case NodeState.LOADING:
+      return "subtleBg";
     default:
       return "subtleBg";
   }
@@ -147,6 +153,8 @@ export const getTitleTextColor = (state: NodeState) => {
     case NodeState.SYNCING:
     case NodeState.STANDBY:
       return "attentionFg";
+    case NodeState.LOADING:
+      return "subtleFg";
     default:
       return "subtleFg";
   }
@@ -216,7 +224,8 @@ export const getDurationBreakdownString = (duration: number) => {
 };
 
 export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
-  const { nodeStatus, isLoading, startNode, stopNode } = useNodeStatus();
+  const { nodeStatus, isLoading, startNode, stopNode, notifyUnstake } =
+    useNodeStatus();
   // const { nodeStatusHistory } = useNodeStatusHistory(address || "");
 
   const state: NodeState = getNodeState(nodeStatus);
@@ -402,6 +411,21 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
     }
   }, [nodeStatus?.state, currentStatus]);
 
+  useEffect(() => {
+    if (notifyUnstake) {
+      setCurrentToast({
+        severity: ToastSeverity.SUCCESS,
+        title: "Node can be unstaked",
+        description: "Your node can now be unstaked.",
+        followupNotification: {
+          type: NotificationType.UNSTAKE_STATUS,
+          severity: NotificationSeverity.SUCCESS,
+          title: "Your node can now be unstaked.",
+        },
+      });
+    }
+  }, [notifyUnstake, setCurrentToast]);
+
   const toggleShowMoreInfo = () => {
     setShowMoreInfo((prevState: boolean) => !prevState);
   };
@@ -424,6 +448,7 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
       selected:
         "Your node has been selected from standby list and will be validating soon",
       ready: "Your node is getting ready to join active validator list",
+      loading: "Your node status is in the process of being fetched",
     })
   );
 
@@ -449,7 +474,7 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
               className="tooltip tooltip-right text-xs bodyFg font-light"
               data-tip={
                 isWalletConnected
-                  ? statusTip.get(nodeStatus?.state || "stopped")
+                  ? statusTip.get(nodeStatus?.state || "loading")
                   : "Please connect your wallet to the Shardeum network"
               }
             >

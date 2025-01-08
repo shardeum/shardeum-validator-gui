@@ -6,10 +6,12 @@ import { useRouter } from "next/router";
 import { PasswordInput } from "../atoms/PasswordInput";
 import { useGlobals } from "../../utils/globals";
 import { useDevice } from "../../context/device";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 export const LoginForm: React.FC = () => {
   const { register, handleSubmit, watch, formState } = useForm();
   const [isInputActive, setIsInputActive] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const passwordInput = watch("password");
 
   const [apiError, setApiError] = useState<Error | null>(null);
@@ -23,7 +25,7 @@ export const LoginForm: React.FC = () => {
   };
 
   useEffect(() => {
-    if (passwordInput && passwordInput.length > 0) {
+    if (passwordInput && passwordInput.length >= 8) {
       setIsInputActive(true);
     } else {
       setIsInputActive(false);
@@ -36,9 +38,9 @@ export const LoginForm: React.FC = () => {
       .login(apiBase, password)
       .then(() => {
         if (isFirstTimeUser() && !isMobile) {
-          router.push("/onboarding");
+          router.replace("/onboarding");
         } else {
-          router.push("/dashboard");
+          router.replace("/dashboard");
         }
       })
       .catch((error) => {
@@ -54,7 +56,9 @@ export const LoginForm: React.FC = () => {
         </label>
         <div>
           <PasswordInput
-            inputProps={register("password")}
+            inputProps={register("password", {
+              minLength: { value: 8, message: "Password must be at least 8 characters" },
+            })}
             isInputActive={isInputActive}
             setIsInputActive={setIsInputActive}
           />
@@ -67,8 +71,24 @@ export const LoginForm: React.FC = () => {
           )}
         </div>
 
-        <div className="flex justify-end">
-          {!formState.isSubmitting && (
+        <div className="flex justify-end items-center">
+        {!formState.isSubmitting && (
+          <>
+            {!isInputActive && (
+              <div className="relative mr-2">
+                <InformationCircleIcon
+                  className="h-5 w-5 text-gray-400 cursor-pointer"
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}
+                />
+                {showTooltip && (
+                  <div className="absolute left-0 bottom-full mb-2 px-3 py-1 text-xs text-white bg-gray-700 rounded-md whitespace-nowrap">
+                    Password must be at least 8 characters
+                    <div className="absolute top-full left-2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-700"></div>
+                  </div>
+                )}
+              </div>
+            )}
             <button
               disabled={formState.isSubmitting || !isInputActive}
               className={
@@ -82,18 +102,19 @@ export const LoginForm: React.FC = () => {
             >
               Connect Securely
             </button>
-          )}
-          {formState.isSubmitting && (
-            <button
-              className="border border-gray-300 rounded px-4 py-2 w-40 flex items-center justify-center text-sm font-medium"
-              disabled={true}
-            >
-              <div className="spinner flex items-center justify-center mr-3">
-                <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-              </div>{" "}
-              Confirming
-            </button>
-          )}
+          </>
+        )}
+        {formState.isSubmitting && (
+          <button
+            className="border border-gray-300 rounded px-4 py-2 w-40 flex items-center justify-center text-sm font-medium"
+            disabled={true}
+          >
+            <div className="spinner flex items-center justify-center mr-3">
+              <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
+            </div>{" "}
+            Confirming
+          </button>
+        )}
         </div>
       </form>
     </div>
