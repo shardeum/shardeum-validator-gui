@@ -24,10 +24,10 @@ export const InformationPopupsDisplay = () => {
 
   useEffect(() => {
     const newGuiAvailable =
-      process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === "true"
-        ? !version?.latestCliVersion.includes("prerelease") &&
-          (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0)
-        : (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0);
+      process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === "false"
+        ? (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0)
+        : !version?.latestCliVersion?.includes("prerelease") &&
+          (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0);
 
     const newValidatorAvailable =
       (version?.runnningValidatorVersion || 0) <

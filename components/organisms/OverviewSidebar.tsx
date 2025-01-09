@@ -17,11 +17,10 @@ export const OverviewSidebar: React.FC = () => {
     useState(false);
 
   const isGuiUpdatePending =
-    process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === "true"
-      ? version?.latestCliVersion.includes("prerelease")
-        ? false
-        : version?.runningCliVersion !== version?.latestCliVersion
-      : version?.runningCliVersion !== version?.latestCliVersion;
+    process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === "false"
+      ? version?.runningCliVersion !== version?.latestCliVersion
+      : !version?.latestCliVersion.includes("prerelease") &&
+        version?.runningCliVersion !== version?.latestCliVersion;
 
   const isValidatorUpdatePending =
     version?.runnningValidatorVersion !== version?.activeShardeumVersion;
