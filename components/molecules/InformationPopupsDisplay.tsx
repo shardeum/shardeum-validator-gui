@@ -24,7 +24,10 @@ export const InformationPopupsDisplay = () => {
 
   useEffect(() => {
     const newGuiAvailable =
-      (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0);
+      !process.env.IGNORE_PRERELEASE &&
+      version?.latestCliVersion.includes("prerelease")
+        ? (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0)
+        : false;
     const newValidatorAvailable =
       (version?.runnningValidatorVersion || 0) <
       (version?.activeShardeumVersion || 0);
