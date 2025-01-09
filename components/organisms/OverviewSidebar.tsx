@@ -16,13 +16,15 @@ export const OverviewSidebar: React.FC = () => {
   const [areSupportOptionsVisible, setAreSupportOptionsVisible] =
     useState(false);
 
-    const isGuiUpdatePending =
-      !process.env.IGNORE_PRERELEASE &&
-      version?.latestCliVersion.includes("prerelease")
-        ? version?.runningCliVersion !== version?.latestCliVersion
-        : false;
-    const isValidatorUpdatePending =
-      version?.runnningValidatorVersion !== version?.activeShardeumVersion;
+  const isGuiUpdatePending =
+    process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === "true"
+      ? version?.latestCliVersion.includes("prerelease")
+        ? false
+        : version?.runningCliVersion !== version?.latestCliVersion
+      : version?.runningCliVersion !== version?.latestCliVersion;
+
+  const isValidatorUpdatePending =
+    version?.runnningValidatorVersion !== version?.activeShardeumVersion;
 
   return (
     <div className="flex flex-col gap-y-16 scroll-smooth">
