@@ -8,7 +8,13 @@ import { SupportDisplay } from "../molecules/SupportDisplay";
 import { NodeStatusUpdate } from "../atoms/NodeStatusUpdate";
 
 function compareVersions(version1?: string, version2?: string) {
-  if (!version1 || !version2) throw new Error("Invalid version string");
+  if (!version1 || !version2) {
+    console.error("Invalid version string(s) provided:", {
+      version1,
+      version2,
+    });
+    return 0; // return 0 in this case to avoid falsly indicating a version mismatch when one of the versions is missing
+  }
 
   const v1Parts = version1.split(".").map(Number);
   const v2Parts = version2.split(".").map(Number);
