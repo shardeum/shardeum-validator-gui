@@ -25,11 +25,10 @@ export const useNodeStatus = (): NodeStatusResponse => {
   let hasShownUnstakeNotification = false
 
   useEffect(() => {
-    localStorage.getItem('hasShownUnstakeNotification') ? hasShownUnstakeNotification = true : hasShownUnstakeNotification = false
+    localStorage.getItem('hasShownUnstakeNotification') === 'true' ? hasShownUnstakeNotification = true : hasShownUnstakeNotification = false
     if (data?.stakeState?.unlocked && !hasShownUnstakeNotification) {
       setShowUnstakeNotification(true);
     } else if (data?.stakeState?.unlocked === false && hasShownUnstakeNotification) {
-      hasShownUnstakeNotification = false
       localStorage.setItem('hasShownUnstakeNotification', 'false')
     }
   }, [data]);
