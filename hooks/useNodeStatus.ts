@@ -20,14 +20,17 @@ export const useNodeStatus = (): NodeStatusResponse => {
   const fetcherWithContext = useContext(FetcherContext);
   const { data, mutate } = useSWR<NodeStatus>(nodeStatusApi, fetcherWithContext, { refreshInterval: 1000 })
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [hasShownUnstakeNotification, setHasShownUnstakeNotification] =
+  const [showUnstakeNotification, setShowUnstakeNotification] =
     useState<boolean>(false);
+  let hasShownUnstakeNotification = false
 
   useEffect(() => {
+    localStorage.getItem('hasShownUnstakeNotification') ? hasShownUnstakeNotification = true : hasShownUnstakeNotification = false
     if (data?.stakeState?.unlocked && !hasShownUnstakeNotification) {
-      setHasShownUnstakeNotification(true);
-    } else if (!data?.stakeState?.unlocked && hasShownUnstakeNotification) {
-      setHasShownUnstakeNotification(false);
+      setShowUnstakeNotification(true);
+    } else if (data?.stakeState?.unlocked === false && hasShownUnstakeNotification) {
+      hasShownUnstakeNotification = false
+      localStorage.setItem('hasShownUnstakeNotification', 'false')
     }
   }, [data]);
 
@@ -58,7 +61,7 @@ export const useNodeStatus = (): NodeStatusResponse => {
     startNode,
     stopNode,
     isLoading,
-    notifyUnstake: hasShownUnstakeNotification,
+    notifyUnstake: showUnstakeNotification,
   };
 }
 
