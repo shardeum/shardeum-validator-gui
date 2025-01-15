@@ -288,7 +288,7 @@ export default function Maintenance() {
 
                   {isConnected &&
                     chain?.id === CHAIN_ID &&
-                    (stakeInfo?.stake ?? "0.0") > "0.0" &&
+                    parseFloat(stakeInfo?.stake ?? "0.0") > parseFloat("0.0") &&
                     nodeStatus?.nomineeAddress != null &&
                     stakeInfo?.nominee !== nodeStatus?.nomineeAddress && (
                       <div className="flex text-red-500 items-center">

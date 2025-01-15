@@ -56,7 +56,7 @@ export const RewardsCard = () => {
     );
   }, [nodeStatus?.state, nodeStatus?.lockedStake, isConnected, chain?.id]);
 
-  const hasStakeOnThisNode = (stakeInfo?.stake ?? "0.0") > "0.0" &&
+  const hasStakeOnThisNode = parseFloat(stakeInfo?.stake ?? "0.0") > parseFloat("0.0") &&
     nodeStatus?.nomineeAddress != null &&
     stakeInfo?.nominee === nodeStatus?.nomineeAddress
 
