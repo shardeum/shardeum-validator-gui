@@ -412,7 +412,8 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
   }, [nodeStatus?.state, currentStatus]);
 
   useEffect(() => {
-    if (notifyUnstake) {
+    const hasShownUnstakeNotification = JSON.parse(localStorage.getItem('hasShownUnstakeNotification') ?? 'false')
+    if (notifyUnstake && hasShownUnstakeNotification === false ) {
       setCurrentToast({
         severity: ToastSeverity.SUCCESS,
         title: "Node can be unstaked",
@@ -423,6 +424,7 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
           title: "Your node can now be unstaked.",
         },
       });
+      localStorage.setItem('hasShownUnstakeNotification', 'true')
     }
   }, [notifyUnstake, setCurrentToast]);
 
