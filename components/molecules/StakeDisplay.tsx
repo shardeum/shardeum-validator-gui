@@ -48,7 +48,7 @@ export const StakeDisplay = () => {
   };
 
   const stakeForConnectedAddressOrNode = parseFloat((stakeInfo?.stake?.trim() || nodeStatus?.lockedStake || "0"));
-  const hasStakeOnDifferentNode = (stakeInfo?.stake ?? "0.0") > "0.0" &&
+  const hasStakeOnDifferentNode = parseFloat(stakeInfo?.stake ?? "0.0") > parseFloat("0.0") &&
     nodeStatus?.nomineeAddress != null &&
     stakeInfo?.nominee !== nodeStatus?.nomineeAddress;
 
