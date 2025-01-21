@@ -71,7 +71,7 @@ export const RewardsCard = () => {
               <div className="flex flex-col w-full gap-y-2">
                 <span className="font-semibold text-2xl flex gap-x-2">
                   <span>
-                    {parseFloat(!isConnected ? nodeStatus?.currentRewards ?? "0" : hasStakeOnThisNode ? rewardsThisCycle : stakeInfo?.rewards ?? "0").toFixed(2)}{" "}
+                    {parseFloat(!isConnected ? "0" : hasStakeOnThisNode ? rewardsThisCycle : stakeInfo?.rewards ?? "0").toFixed(2)}{" "}
                     SHM
                   </span>
                   {/* <span className="text-xs leading-9 bodyFg">(~0.00$)</span> */}
