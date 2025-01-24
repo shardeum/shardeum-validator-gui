@@ -62,14 +62,16 @@ export const StakeDisplay = () => {
     <Card>
       <>
         <div className="flex flex-col text-subtleFg">
-          <div className={`flex flex-col gap-y-2 p-3 font-semibold text-xl`}>
-            <span>
+          <div className={`flex flex-col gap-y-2 p-3`}>
+            <span className="text-lg md:text-xl font-semibold">
               {stakeForConnectedAddressOrNode.toFixed(2)}{" "}
               SHM
             </span>
-            <div className="flex gap-x-1">
-              <span className="font-light text-xs">Min. requirement: </span>
-              {nodeStatus?.stakeRequirement || "10"} SHM
+            <div className="flex gap-x-1 items-center">
+              <span className="text-xs font-light">Min. requirement: </span>
+              <span className="text-sm">
+                {nodeStatus?.stakeRequirement || "10"} SHM
+              </span>
             </div>
           </div>
           <hr className="my-1 mx-3"/>
