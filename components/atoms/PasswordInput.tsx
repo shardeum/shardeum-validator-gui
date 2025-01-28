@@ -4,13 +4,11 @@ import { useState } from "react";
 type PasswordInputProps = {
   inputProps?: object;
   isInputActive: boolean;
-  setIsInputActive: (isInputActive: boolean) => void;
 };
 
 export const PasswordInput = ({
   inputProps,
   isInputActive,
-  setIsInputActive,
 }: PasswordInputProps) => {
   const [isInputVisible, setIsInputVisible] = useState(false);
 

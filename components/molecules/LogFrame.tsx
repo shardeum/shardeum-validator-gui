@@ -14,7 +14,7 @@ type LogFrameProps = {
 export const LogFrame = ({ logId }: LogFrameProps) => {
   const { downloadLog } = useNodeLogs();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [logContent, setLogContent] = useState<string>("");
   const [logContentFetchedAlready, setLogContentFetchedAlready] =
     useState(false);

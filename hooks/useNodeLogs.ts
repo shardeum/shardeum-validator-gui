@@ -45,7 +45,7 @@ export const useNodeLogs = (): NodeLogsResponse => {
   };
 
   const clearAllLogs = async (): Promise<void> => {
-    const response = await fetch(`${apiBase}/api/node/logs`, {
+    await fetch(`${apiBase}/api/node/logs`, {
       method: "DELETE",
       credentials: 'include',
     })

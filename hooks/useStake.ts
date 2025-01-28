@@ -115,15 +115,6 @@ export const useStake = ({ nominator, nominee, stakeAmount, onStake, totalStaked
       console.log()
     } catch (error: unknown) {
       console.error(error);
-      let errorMessage = (error as Error)?.message || String(error);
-
-      // 4001 is the error code for when a user rejects a transaction
-      if (
-        (isMetaMaskError(error) && error.code === 4001) ||
-        (isEthersError(error) && error.code === "ACTION_REJECTED")
-      ) {
-        errorMessage = "Transaction rejected by user";
-      }
       if (errorFlag) {
         onStake?.(false);
         setLoading(false);

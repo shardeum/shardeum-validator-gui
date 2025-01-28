@@ -1,6 +1,4 @@
 import {
-  ChevronDownIcon,
-  ChevronUpIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Card } from "../layouts/Card";
@@ -8,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useNodeStatus } from "../../hooks/useNodeStatus";
 import { NodeStatus as NodeStatusModel } from "../../model/node-status";
 import useToastStore, { ToastSeverity } from "../../hooks/useToastStore";
-// import { useNodeStatusHistory } from "../../hooks/useNodeStatusHistory";
 import moment from "moment";
 import {
   NotificationSeverity,
@@ -29,24 +26,12 @@ export enum NodeState {
   LOADING = "LOADING",
 }
 
-type DailyNodeStatus = {
-  day: string;
-  activeDuration: number; // in %of total time
-  standbyDuration: number; // in %of total time -> includes time spent syncing
-  stoppedDuration: number; // in %of total time
-};
-
-type NodeStatusProps = {
-  isWalletConnected: boolean;
-  address: string;
-};
-
 const previousNodeStateKey = "previousNodeState";
 
 export const getNodeState = (
   nodeStatus: NodeStatusModel | undefined
 ): NodeState => {
-  let nodeState: NodeState = NodeState.LOADING;
+  let nodeState: NodeState;
   switch (nodeStatus?.state) {
     case "active":
       nodeState = NodeState.ACTIVE;
@@ -79,7 +64,7 @@ export const getNodeState = (
 };
 
 export const getTitle = (state: NodeState) => {
-  let title = "";
+  let title: string;
   switch (state) {
     case NodeState.ACTIVE:
       title = "Validating";
@@ -160,80 +145,17 @@ export const getTitleTextColor = (state: NodeState) => {
   }
 };
 
-const getNodeStatusHistoryChart = (nodeStatusHistories: DailyNodeStatus[]) => {
-  return (
-    <div className="flex bg-subtleBg p-2 h-full">
-      <div className="w-full h-20 flex justify-around gap-x-5">
-        {nodeStatusHistories.map((nodeStatusHistory) => {
-          const activeDuration = nodeStatusHistory.activeDuration;
-          const inactiveDuration = 100 - activeDuration;
-          return (
-            <div
-              className="flex flex-col gap-y-2 items-center"
-              key={nodeStatusHistory.day}
-            >
-              <div className="h-20 w-2 flex flex-col-reverse gap-y-0.5">
-                <div
-                  className="bg-successFg tooltip dropdown-400"
-                  data-tip={`${activeDuration.toFixed(2)}%`}
-                  style={{
-                    height: `${activeDuration}%`,
-                  }}
-                ></div>
-                <div
-                  className="bg-greyFg tooltip dropdown-500"
-                  data-tip={`${inactiveDuration.toFixed(2)}%`}
-                  style={{
-                    height: `${inactiveDuration}%`,
-                  }}
-                ></div>
-                {/* <div
-                  className="bg-attentionBorder tooltip dropdown-500"
-                  data-tip={`${standbyDuration}%`}
-                  style={{
-                    height: `${standbyDuration}%`,
-                  }}
-                ></div>
-                <div
-                  className="bg-severeFg tooltip dropdown-600"
-                  data-tip={`${stoppedDuration}%`}
-                  style={{
-                    height: `${stoppedDuration}%`,
-                  }}
-                ></div> */}
-              </div>
-              <span className="text-xs font-medium">
-                {nodeStatusHistory.day}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
-export const getDurationBreakdownString = (duration: number) => {
-  if (duration === 0) {
-    return "0s";
-  }
-  const momentDuration = moment.duration(duration, "seconds");
-  return `${momentDuration.weeks() > 0 ? `${momentDuration.weeks()}w ` : ""}${
-    momentDuration.days() > 0 ? `${momentDuration.days()}d ` : ""
-  }${momentDuration.hours()}h ${momentDuration.minutes()}m ${momentDuration.seconds()}s`;
-};
-
-export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
+export const NodeStatus = ({ isWalletConnected}: {isWalletConnected: boolean}) => {
   const { nodeStatus, isLoading, startNode, stopNode, notifyUnstake } =
     useNodeStatus();
-  // const { nodeStatusHistory } = useNodeStatusHistory(address || "");
 
   const state: NodeState = getNodeState(nodeStatus);
   const title = getTitle(state);
   const titleBgColor = getTitleBgColor(state);
   const titleTextColor = getTitleTextColor(state);
 
-  const [showMoreInfo, setShowMoreInfo] = useState(false);
+  const [showMoreInfo] = useState(false);
   const { setCurrentToast, resetToast } = useToastStore((state: any) => ({
     setCurrentToast: state.setCurrentToast,
     resetToast: state.resetToast,
@@ -245,56 +167,6 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
       currentStatus: state.currentStatus,
     })
   );
-
-  // const [nodeStatusHistories, setNodeStatusHistories] = useState<
-  //   DailyNodeStatus[]
-  // >([]);
-  // const [totalValidatingTime, setTotalValidatingTime] = useState("0s");
-  // const [totalValidatingTimeThisWeek, setTotalValidatingTimeThisWeek] =
-  //   useState("0s");
-
-  // useEffect(() => {
-  //   setTotalValidatingTime(
-  //     getDurationBreakdownString(nodeStatusHistory?.totalNodeTime)
-  //   );
-
-  //   const pastWeekValidatingTimes: number[] = [];
-  //   const pastDay = moment().subtract(6, "d").startOf("day"); // 1 week ago
-  //   const pastWeekReferenceTimes: number[][] = [];
-  //   for (let i = 0; i < 6; i++) {
-  //     pastWeekReferenceTimes.push([pastDay.unix(), pastDay.add(1, "d").unix()]);
-  //     pastWeekValidatingTimes.push(0);
-  //   }
-  //   pastWeekValidatingTimes.push(0);
-  //   pastWeekReferenceTimes.push([pastDay.unix(), moment().unix()]);
-
-  //   (nodeStatusHistory?.history || []).forEach((session: any) => {
-  //     for (let i = 0; i < 7; i++) {
-  //       const [startOfDay, endOfDay] = pastWeekReferenceTimes[i];
-  //       const secondsOverlapWithTheDay = Math.max(
-  //         Math.min(endOfDay, session.e) - Math.max(startOfDay, session.b),
-  //         0
-  //       );
-  //       pastWeekValidatingTimes[i] += secondsOverlapWithTheDay;
-  //     }
-  //   });
-
-  //   let timeSpentValidatingInPastWeek = 0;
-  //   const statusHistories = [];
-  //   for (let i = 0; i < 7; i++) {
-  //     timeSpentValidatingInPastWeek += pastWeekValidatingTimes[i];
-  //     statusHistories.push({
-  //       day: moment.unix(pastWeekReferenceTimes[i][0]).format("ddd	"),
-  //       activeDuration: (pastWeekValidatingTimes[i] / 86400) * 100,
-  //       standbyDuration: 0,
-  //       stoppedDuration: 0,
-  //     });
-  //   }
-  //   setNodeStatusHistories(statusHistories);
-  //   setTotalValidatingTimeThisWeek(
-  //     getDurationBreakdownString(timeSpentValidatingInPastWeek)
-  //   );
-  // }, [nodeStatusHistory?.history, nodeStatusHistory?.totalNodeTime]);
 
   useEffect(() => {
     const previousNodeState = localStorage.getItem(previousNodeStateKey);
@@ -428,10 +300,6 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
     }
   }, [notifyUnstake, setCurrentToast]);
 
-  const toggleShowMoreInfo = () => {
-    setShowMoreInfo((prevState: boolean) => !prevState);
-  };
-
   const isNodeStopped = state === NodeState.STOPPED;
 
   const statusTip = new Map<string, string>(
@@ -524,42 +392,8 @@ export const NodeStatus = ({ isWalletConnected, address }: NodeStatusProps) => {
             </div>
             <hr className="my-1" />
             <div className="flex flex-col gap-y-3">
-              {/* <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold">More Info</span>
-                {!showMoreInfo && (
-                  <ChevronDownIcon
-                    className="h-3 w-3 cursor-pointer ease-out duration-200"
-                    onClick={toggleShowMoreInfo}
-                  />
-                )}
-                {showMoreInfo && (
-                  <ChevronUpIcon
-                    className="h-3 w-3 cursor-pointer ease-out duration-200"
-                    onClick={toggleShowMoreInfo}
-                  />
-                )}
-              </div> */}
               {showMoreInfo && (
                 <></>
-                // <div className="flex flex-col gap-y-2 text-subtleFg dropdown-300">
-                //   <div className="flex justify-between">
-                //     <span className="font-light text-xs">
-                //       Total validating time
-                //     </span>
-                //     <span className="text-xs font-medium">
-                //       {totalValidatingTime}
-                //     </span>
-                //   </div>
-                //   <div className="flex justify-between">
-                //     <span className="font-light text-xs">
-                //       Validating time this week
-                //     </span>
-                //     <span className="text-xs font-medium">
-                //       {totalValidatingTimeThisWeek}
-                //     </span>
-                //   </div>
-                //   {getNodeStatusHistoryChart(nodeStatusHistories)}
-                // </div>
               )}
               <div className="flex justify-end">
                 {!isNodeStopped && !isLoading && (

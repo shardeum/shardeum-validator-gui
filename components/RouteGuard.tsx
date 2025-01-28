@@ -1,12 +1,10 @@
 import { useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { authService, checkServerAuth } from "../services/auth.service";
-import { useGlobals } from "../utils/globals";
 
 export default function RouteGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
-  const { apiBase } = useGlobals();
 
   useEffect(() => {
     // on initial load - run auth check
@@ -29,7 +27,7 @@ export default function RouteGuard({ children }: { children: ReactNode }) {
   }, []);
 
   async function initialAuthCheck() {
-    const isServerAuth = await checkServerAuth();
+    await checkServerAuth();
     authCheck(router.asPath);
   }
 

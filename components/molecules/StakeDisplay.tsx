@@ -26,8 +26,6 @@ export const StakeDisplay = () => {
   );
   const [hasNodeStopped, setHasNodeStopped] = useState(false);
 
-  const minimumStakeRequirement = parseFloat(nodeStatus?.stakeRequirement || "10")
-
   useEffect(() => {
     if (nodeStatus?.state === "stopped") {
       setHasNodeStopped(true);

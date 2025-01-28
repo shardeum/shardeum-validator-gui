@@ -60,7 +60,6 @@ export const LoginForm: React.FC = () => {
               minLength: { value: 8, message: "Password must be at least 8 characters" },
             })}
             isInputActive={isInputActive}
-            setIsInputActive={setIsInputActive}
           />
           {apiError && (
             <div className="flex text-red-600 items-center mb-5 mt-1">
