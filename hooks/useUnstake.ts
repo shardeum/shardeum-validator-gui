@@ -87,7 +87,7 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
     return false;
   };
 
-  const [haveMetamask, sethaveMetamask] = useState(false);
+  const [, sethaveMetamask] = useState(false);
 
   useEffect(() => {
     const checkMetamaskAvailability = async () => {

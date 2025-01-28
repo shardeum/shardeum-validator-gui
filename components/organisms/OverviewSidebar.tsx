@@ -34,7 +34,7 @@ export const OverviewSidebar: React.FC = () => {
   const renderCount = useRef(0);
   renderCount.current = renderCount.current + 1;
 
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const { version } = useNodeVersion();
   const [areSupportOptionsVisible, setAreSupportOptionsVisible] =
     useState(false);
@@ -59,7 +59,6 @@ export const OverviewSidebar: React.FC = () => {
           <div className="z-30">
             <NodeStatus
               isWalletConnected={isConnected}
-              address={address || ""}
             />
           </div>
           <div className="relative">

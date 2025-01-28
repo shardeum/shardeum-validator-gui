@@ -147,7 +147,6 @@ const PasswordResetForm = () => {
                 required: "This field is required",
               })}
               isInputActive={isCurrentPasswordInputActive}
-              setIsInputActive={setIsCurrentPasswordInputActive}
             />
             <span className="text-right text-sm text-warning">
               {formState.errors.currentPassword && (
@@ -165,7 +164,6 @@ const PasswordResetForm = () => {
                 required: "This field is required",
               })}
               isInputActive={isNewPasswordInputActive}
-              setIsInputActive={setIsNewPasswordInputActive}
             />
             <span className="text-right text-sm text-warning">
               {formState.errors.newPassword && (
@@ -183,7 +181,6 @@ const PasswordResetForm = () => {
                 required: "This field is required",
               })}
               isInputActive={isConfirmNewPasswordInputActive}
-              setIsInputActive={setIsConfirmNewPasswordInputActive}
             />
             <span className="text-right text-sm text-warning">
               {formState.errors.confirmNewPassword && (

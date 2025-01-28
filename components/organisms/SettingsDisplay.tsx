@@ -15,7 +15,6 @@ export const SettingsDisplay = () => {
   const {
     settings,
     updateSettings,
-    isLoading: updateSettingsLoading,
   } = useSettings();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();

@@ -13,7 +13,6 @@ type NodeVersionResult = {
   version: NodeVersion | undefined
 }
 
-const nodeVersionDataKey = 'nodeVersionData';
 let data: NodeVersion | undefined;
 let error: Error | undefined;
 let lastFetchedAt: Date;

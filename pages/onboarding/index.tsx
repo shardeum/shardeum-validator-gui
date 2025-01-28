@@ -18,7 +18,6 @@ import { useRouter } from "next/router";
 import { WalletConnectButton } from "../../components/molecules/WalletConnectButton";
 import { GeistSans } from "geist/font";
 import Link from "next/link";
-import { useGlobals } from "../../utils/globals";
 import { useStake } from "../../hooks/useStake";
 import { ToastWindow } from "../../components/molecules/ToastWindow";
 import useToastStore, { ToastSeverity } from "../../hooks/useToastStore";
@@ -106,8 +105,6 @@ const Onboarding = () => {
     },
   });
 
-  const { apiBase } = useGlobals();
-
   useEffect(() => {
     if (nodeStatus?.state && nodeStatus.state !== "stopped") {
       setIsNodeStarted(true);
@@ -160,34 +157,6 @@ const Onboarding = () => {
       });
     }
   }, [isStaking]);
-
-  const claimTokens = async (address: string) => {
-    const claimUrl = `${apiBase}/api/claim-tokens?address=${address}`;
-    const claimResponse = await fetch(claimUrl, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await claimResponse.json();
-    const tokenClaimComplete = data && data?.transfer;
-    if (tokenClaimComplete) {
-      localStorage.setItem(tokensClaimedByKey, address);
-    } else {
-      setCurrentToast({
-        severity: ToastSeverity.DANGER,
-        title: "Claiming Unsuccessful",
-        description: data?.message,
-        followupNotification: {
-          title: "Claiming SHM Unsuccessful",
-          type: NotificationType.REWARD,
-          severity: NotificationSeverity.DANGER,
-        },
-      });
-    }
-    return tokenClaimComplete;
-  };
 
   return (
     <div

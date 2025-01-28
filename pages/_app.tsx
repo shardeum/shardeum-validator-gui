@@ -14,7 +14,6 @@ import {
 import {
   injectedWallet,
   metaMaskWallet,
-  walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import ConfirmModalContextProvider from "../components/ConfirmModalContextProvider";
 import RouteGuard from "../components/RouteGuard";
