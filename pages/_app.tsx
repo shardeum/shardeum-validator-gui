@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from "next/app";
-import Layout from "../components/Layout";
+import ErrorPage from "../components/ErrorPage";
 import React, { ReactElement, useEffect } from "react";
 import { NextPage } from "next";
 import ToastContextProvider from "../components/ToastContextProvider";
@@ -29,8 +29,8 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function getDefaultLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+function getErrorPage(page: ReactElement) {
+  return <ErrorPage>{page}</ErrorPage>;
 }
 
 export const RPC_URL =
@@ -90,7 +90,7 @@ function preventWindowControl() {
 }
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? getDefaultLayout;
+  const getLayout = Component.getLayout ?? getErrorPage;
 
   useEffect(() => {
     preventWindowControl();
