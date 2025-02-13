@@ -130,7 +130,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
         }
         console.log("executing operator-cli is_genesis_node...");
         const output = execFileSync(
-          "operator-cli",
+          "'/usr/local/bin/operator-cli",
           ["is_genesis_node", address],
           {
             encoding: "utf8",
@@ -151,9 +151,14 @@ export default function configureNodeHandlers(apiRouter: Router) {
     "/node/update",
     doubleCsrfProtection,
     asyncRouteHandler(async (req: Request, res: Response) => {
-      const outUpdate = execFileSync("operator-cli", ["update"]);
+      const outUpdate = execFileSync("'/usr/local/bin/operator-cli", [
+        "update",
+      ]);
       console.log("operator-cli update: ", outUpdate);
-      const outGuiRestart = execFileSync("operator-cli", ["gui", "restart"]);
+      const outGuiRestart = execFileSync("'/usr/local/bin/operator-cli", [
+        "gui",
+        "restart",
+      ]);
       console.log("operator-cli gui restart: ", outGuiRestart);
       res.end();
     })
