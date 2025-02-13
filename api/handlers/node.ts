@@ -172,9 +172,13 @@ export default function configureNodeHandlers(apiRouter: Router) {
       async (req: Request, res: Response<NodeNetworkResponse>) => {
         // Exec the CLI validator stop command
         console.log("executing operator-cli network-stats");
-        const output = execFileSync("operator-cli", ["network-stats"], {
-          encoding: "utf8",
-        });
+        const output = execFileSync(
+          "/usr/local/bin/operator-cli",
+          ["network-stats"],
+          {
+            encoding: "utf8",
+          }
+        );
         const yamlData = yaml.load(output);
         res.json(yamlData);
       }
