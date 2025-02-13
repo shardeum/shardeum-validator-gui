@@ -1,15 +1,52 @@
 import Link from "next/link";
 import greyLogo from "../../assets/grey-logo.svg";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
 import { ErrorIcon } from "../atoms/ErrorIcon";
+import { useGenesisStatus } from "../../hooks/useGenesisStatus";
+import { useState, useEffect } from "react";
 
 export const NonGenesisNodeDisplay = () => {
-  const { nodeStatus } = useNodeStatus();
-  const isGenesisNode = nodeStatus?.isGenesisNode;
+  const ethereum = window.ethereum;
+  const [currentWallet, setCurrentWallet] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getActiveWallet() {
+      if (ethereum) {
+        try {
+          const accounts: string[] = await ethereum.request({
+            method: "eth_accounts",
+          });
+          if (accounts.length > 0) {
+            setCurrentWallet(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Failed to get accounts", error);
+        }
+      }
+    }
+    getActiveWallet();
+
+    if (ethereum?.on) {
+      const handleAccountsChanged = (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setCurrentWallet(accounts[0]);
+        } else {
+          setCurrentWallet(null);
+        }
+      };
+      ethereum.on("accountsChanged", handleAccountsChanged);
+
+      return () => {
+        ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      };
+    }
+  }, [ethereum]);
+
+  const { isGenesisNode } = useGenesisStatus(currentWallet);
+
   return (
     !isGenesisNode && (
       <div className="flex flex-col gap-y-3">
-        <div className="w-full h-full border shadow rounded p-4 bg-white max-md:hidden">
+        <div className="w-full h-full border shadow rounded px-5 py-4 bg-white max-md:hidden">
           <div className="flex">
             <div className="flex flex-col grow gap-x-3">
               <div className="text-sm font-semibold">
@@ -19,21 +56,29 @@ export const NonGenesisNodeDisplay = () => {
                 />
                 No Genesis Node License Detected
               </div>
-              <div className="flex justify-start mt-3">
-                <span className="bodyFg text-xs font-light">
-                  You need to have a Genesis Node license in order to join as a
-                  validator on Shardeum. Please click <Link href="">here </Link>
-                  to purchase a Genesis node license.
+              <div className="flex flex-col justify-start mt-1 mx-4">
+                <span className="bodyFg">
+                  You need to have a <b>Genesis Node license</b> in order to
+                  join as a validator on Shardeum.
                 </span>
+                <span className="bodyFg">
+                  If you have a <b>Genesis Node license</b>, please make sure
+                  you are connected to the correct wallet.
+                </span>
+                <hr className="my-1 mt-5 mb-5" />
+                <div className="flex justify-end">
+                  <a
+                    href="https://ADDTHELICENSELINKHERE.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="max-w-[12rem] w-full"
+                  >
+                    <button className="w-full px-3 py-2 rounded text-sm bg-primary text-white">
+                      Purchase License
+                    </button>
+                  </a>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col justify-center items-center max-w-[5rem] w-full mr-6">
-              <div
-                className="fill-bg h-full w-full"
-                style={{
-                  backgroundImage: `url(${greyLogo.src})`,
-                }}
-              ></div>
             </div>
           </div>
         </div>

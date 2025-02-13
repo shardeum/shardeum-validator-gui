@@ -120,46 +120,61 @@ export default function configureNodeHandlers(apiRouter: Router) {
   }));
 
   apiRouter.get(
-    '/account/:address/stakeInfo',
-    asyncRouteHandler(async (req: Request, res: Response<NodeStatusResponse>) => {
-      const address = req.params.address;
-      if (!address) {
-        badRequestResponse(res, 'No address provided');
-        return;
+    "/is-genesis-node/:address",
+    asyncRouteHandler(
+      async (req: Request, res: Response<NodeStatusResponse>) => {
+        const address = req.params.address;
+        if (!address) {
+          badRequestResponse(res, "No address provided");
+          return;
+        }
+        console.log("executing operator-cli is_genesis_node...");
+        const output = execFileSync(
+          "operator-cli",
+          ["is_genesis_node", address],
+          {
+            encoding: "utf8",
+          }
+        );
+
+        try {
+          const yamlData = yaml.load(output);
+          res.json(yamlData);
+        } catch (e) {
+          notFoundResponse(res, "Unable to fetch status");
+        }
       }
-      console.log('executing operator-cli status...');
-      const output = execFileSync('/usr/local/bin/operator-cli', ['stake_info', address], { encoding: 'utf8' })
-      try {
-        const yamlData = yaml.load(output);
-        res.json(yamlData);
-      } catch (e) {
-        notFoundResponse(res, 'Unable to fetch status');
-      }
-    })
+    )
   );
 
   apiRouter.post(
-    '/node/update', doubleCsrfProtection,
+    "/node/update",
+    doubleCsrfProtection,
     asyncRouteHandler(async (req: Request, res: Response) => {
-      const outUpdate = execFileSync('/usr/local/bin/operator-cli', ['update']);
-      console.log('operator-cli update: ', outUpdate);
-      const outGuiRestart = execFileSync('/usr/local/bin/operator-cli', ['gui', 'restart']);
-      console.log('operator-cli gui restart: ', outGuiRestart);
+      const outUpdate = execFileSync("operator-cli", ["update"]);
+      console.log("operator-cli update: ", outUpdate);
+      const outGuiRestart = execFileSync("operator-cli", ["gui", "restart"]);
+      console.log("operator-cli gui restart: ", outGuiRestart);
       res.end();
     })
   );
 
-  apiRouter.get('/node/version', nodeVersionHandler);
+  apiRouter.get("/node/version", nodeVersionHandler);
 
   apiRouter.get(
-    '/node/network',
-    asyncRouteHandler(async (req: Request, res: Response<NodeNetworkResponse>) => {
-      // Exec the CLI validator stop command
-      console.log('executing operator-cli network-stats');
-      const output = execFileSync('/usr/local/bin/operator-cli', ['network-stats'], { encoding: 'utf8' })
-      const yamlData = yaml.load(output);
-      res.json(yamlData);
-    }));
+    "/node/network",
+    asyncRouteHandler(
+      async (req: Request, res: Response<NodeNetworkResponse>) => {
+        // Exec the CLI validator stop command
+        console.log("executing operator-cli network-stats");
+        const output = execFileSync("operator-cli", ["network-stats"], {
+          encoding: "utf8",
+        });
+        const yamlData = yaml.load(output);
+        res.json(yamlData);
+      }
+    )
+  );
 
   apiRouter.post(
     '/password', doubleCsrfProtection,
