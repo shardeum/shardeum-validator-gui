@@ -151,11 +151,9 @@ export default function configureNodeHandlers(apiRouter: Router) {
     "/node/update",
     doubleCsrfProtection,
     asyncRouteHandler(async (req: Request, res: Response) => {
-      const outUpdate = execFileSync("'/usr/local/bin/operator-cli", [
-        "update",
-      ]);
+      const outUpdate = execFileSync("/usr/local/bin/operator-cli", ["update"]);
       console.log("operator-cli update: ", outUpdate);
-      const outGuiRestart = execFileSync("'/usr/local/bin/operator-cli", [
+      const outGuiRestart = execFileSync("/usr/local/bin/operator-cli", [
         "gui",
         "restart",
       ]);
