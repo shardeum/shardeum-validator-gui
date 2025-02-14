@@ -58,8 +58,9 @@ export const NonGenesisNodeDisplay = () => {
               </div>
               <div className="flex flex-col justify-start mt-1 mx-4">
                 <span className="bodyFg">
-                  You need to have a <b>Genesis Node license</b> in order to
-                  join as a validator on Shardeum.
+                  In the beginning, you need to have a{" "}
+                  <b>Genesis Node license</b> in order to join as a validator on
+                  Shardeum.
                 </span>
                 <span className="bodyFg">
                   If you have a <b>Genesis Node license</b>, please make sure
