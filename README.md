@@ -130,9 +130,9 @@ operator-cli gui set password 123456 #log into the GUI with 123456 as your passw
 operator-cli status
 ```
 
-For a complete list of node commands, check the [node-commands.ts](./src/node-commands.ts) file.
+For a complete list of node commands, check the [node-commands.ts](https://github.com/shardeum/shardeum-validator-cli/blob/main/src/node-commands.ts) file.
 
-For GUI-related commands, refer to the [gui-commands.ts](./src/gui-commands.ts) file.
+For GUI-related commands, refer to the [gui-commands.ts](https://github.com/shardeum/shardeum-validator-cli/blob/main/src/gui-commands.ts) file.
 
 ## Getting Started with Local Development
 
