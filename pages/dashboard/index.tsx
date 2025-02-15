@@ -27,6 +27,7 @@ import { authService } from "../../services/auth.service";
 import { useGlobals } from "../../utils/globals";
 import { InformationPopupsDisplay } from "../../components/molecules/InformationPopupsDisplay";
 import { BgImage } from "../../components/atoms/BgImage";
+import { NonGenesisNodeDisplay } from "../../components/molecules/NonGenesisNodeDisplay";
 
 enum Content {
   MAIN = "MAIN",
@@ -144,7 +145,7 @@ const Dashboard = () => {
                   <>
                     <div className="px-16 flex flex-col gap-y-12">
                       <InformationPopupsDisplay />
-
+                      <NonGenesisNodeDisplay />
                       {/* Rewards */}
                       <section
                         id="overview"
