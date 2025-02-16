@@ -43,7 +43,7 @@ if (isDev) {
     app.get("*", (req: any, res: any) => nextHandler(req, res));
     app.use(errorMiddleware(isDev));
 
-    app.listen(port, "localhost", () => {
+    app.listen(port, () => {
       console.log(`STARTED SERVER IN DEVELOPMENT MODE`);
       console.log(`server started at http://localhost:${port}`);
     });
@@ -75,7 +75,7 @@ if (isDev) {
   );
   const credentials = { key: privateKey, cert: certificate };
 
-  https.createServer(credentials, app).listen(port, "localhost", () => {
+  https.createServer(credentials, app).listen(port, () => {
     console.log(`STARTED SERVER IN PRODUCTION MODE`);
     console.log(`server started at https://localhost:${port}`);
   });
