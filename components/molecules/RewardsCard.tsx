@@ -91,7 +91,7 @@ export const RewardsCard = () => {
           <div className="flex justify-between">
             <span className="text-xs bodyFg">Total rewards earned</span>
             <span className="font-semibold text-xs">
-              {nodeStatus?.lifetimeEarnings || (0.0).toFixed(2)} SHM
+              {nodeStatus?.currentRewards || (0.0).toFixed(2)} SHM
             </span>
           </div>
           <div>
