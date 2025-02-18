@@ -183,7 +183,7 @@ export default function configureNodeHandlers(apiRouter: Router) {
         }
         console.log("executing operator-cli is_genesis_node...");
         const output = execFileSync(
-          "'/usr/local/bin/operator-cli",
+          "/usr/local/bin/operator-cli",
           ["is_genesis_node", address],
           {
             encoding: "utf8",
