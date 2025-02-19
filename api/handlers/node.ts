@@ -172,6 +172,25 @@ export default function configureNodeHandlers(apiRouter: Router) {
     })
   );
 
+    apiRouter.get(
+        '/account/:address/stakeInfo',
+        asyncRouteHandler(async (req: Request, res: Response<NodeStatusResponse>) => {
+            const address = req.params.address;
+            if (!address) {
+                badRequestResponse(res, 'No address provided');
+                return;
+            }
+            console.log('executing operator-cli status...');
+            const output = execFileSync('/usr/local/bin/operator-cli', ['stake_info', address], { encoding: 'utf8' })
+            try {
+                const yamlData = yaml.load(output);
+                res.json(yamlData);
+            } catch (e) {
+                notFoundResponse(res, 'Unable to fetch status');
+            }
+        })
+    );
+
   apiRouter.get(
     "/is-genesis-node/:address",
     asyncRouteHandler(
