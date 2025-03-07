@@ -80,12 +80,12 @@ export default function StakeForm({
         signer.getTransactionCount(),
       ]);
       console.log("BLOB: ", blobData);
-      console.log(stakeAmount,totalStaked);
+      console.log(stakeAmount, totalStaked);
       const value = ethers.BigNumber.from(data.stake);
    
       const totalStakeBigNumber = ethers.BigNumber.from(totalStaked);
       const stakeAmountBigNumber = ethers.utils.parseUnits(stakeAmount, "ether")
-      
+
       console.log(totalStakeBigNumber, stakeAmountBigNumber)
       if (totalStakeBigNumber.lt(stakeAmountBigNumber) && value.lt(stakeAmountBigNumber)) {
         errorFlag = true;
@@ -200,9 +200,8 @@ export default function StakeForm({
         onChange={(e) => handleStakeChange(e)}
       />
       <div
-        className={`flex items-center mb-5 ${
-          !data.stakeOk ? "text-red-500" : ""
-        }`}
+        className={`flex items-center mb-5 ${!data.stakeOk ? "text-red-500" : ""
+          }`}
       >
         <div className="ml-2 font-semibold">
           Stake requirement: {stakeAmount}
@@ -213,9 +212,8 @@ export default function StakeForm({
         <LoadingButton
           onClick={async () => sendTransaction()}
           isLoading={isLoading}
-          className={`btn btn-primary ${
-            isLoading || !data.stakeOk ? "btn-disabled" : ""
-          }`}
+          className={`btn btn-primary ${isLoading || !data.stakeOk ? "btn-disabled" : ""
+            }`}
         >
           Stake
           <ArrowRightIcon className="h-5 w-5 inline ml-2" />

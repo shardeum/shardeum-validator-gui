@@ -9,7 +9,6 @@ import { ExpansionArrow } from "../atoms/ExpansionArrow";
 import useModalStore from "../../hooks/useModalStore";
 import { OverviewSidebar } from "../organisms/OverviewSidebar";
 import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
-import { wasLoggedOutKey } from "../../services/auth.service";
 import {
   getNodeState,
   getTitle,
@@ -86,17 +85,12 @@ export const NodeStatusRibbon = () => {
     const currentNodeState = nodeStatus?.state || previousNodeState;
     resetToast();
     if (previousNodeState !== currentNodeState) {
-      const wasLoggedOut = localStorage.getItem(wasLoggedOutKey) === "true";
-      if (
-        wasLoggedOut &&
-        ["active", "stopped", "waiting-for-network", "need-stake", "ready", "selected"].includes(
-          nodeStatus?.state || ""
-        )
+      if (["active", "stopped", "waiting-for-network", "need-stake", "ready", "selected"].includes(
+        nodeStatus?.state || ""
+      )
       ) {
-        if (wasLoggedOut) {
-          setCurrentStatus(nodeStatus?.state || "");
-          localStorage.removeItem(wasLoggedOutKey);
-        }
+        console.log('nodeStatus?.state', nodeStatus?.state);
+        setCurrentStatus(nodeStatus?.state || "");
       }
 
       switch (nodeStatus?.state) {
@@ -191,7 +185,7 @@ export const NodeStatusRibbon = () => {
         <span className="bg-readyBg text-xl text-readyFg border border-b-readyBg">
           8
         </span>
-        
+
       </div>
       <div
         className={`h-12 shadow flex items-center bg-${titleBgColor} border border-b-${borderColor}`}

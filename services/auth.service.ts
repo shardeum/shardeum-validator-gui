@@ -2,7 +2,6 @@ import Router from 'next/router'
 import { hashSha256 } from '../utils/sha256-hash';
 import { fetcher } from '../hooks/fetcher';
 const isLoggedInKey = 'isLoggedIn'
-export const wasLoggedOutKey = 'wasLoggedOut'
 export const isFirstTimeUserKey = 'isFirstTimeUser'
 
 export async function getCsrfToken(): Promise<string> {
@@ -56,7 +55,6 @@ async function logout(apiBase: string) {
     throw new Error('Error logging out!');
   }
   localStorage.removeItem(isLoggedInKey)
-  localStorage.setItem(wasLoggedOutKey, "true")
   Router.push('/login')
 }
 

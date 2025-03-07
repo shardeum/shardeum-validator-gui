@@ -1,52 +1,40 @@
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import useStatusUpdateStore from "../../hooks/useStatusUpdateStore";
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import useStatusUpdateStore from '../../hooks/useStatusUpdateStore';
+import { NodeStatus } from '../../model/node-status';
+import { useNodeStatus } from '../../hooks/useNodeStatus';
 
-const getStatusUpdateText = (status: string) => {
-  let statusUpdateText = "";
-  switch (status) {
-    case "active":
-      statusUpdateText =
-        "Hey there! While you were away, you were moved into the validating queue.";
-      break;
-    case "stopped":
-      statusUpdateText =
-        "Your node stopped unexpectedly while you were away. Please start the node to start earning rewards.";
-      break;
-    case "need-stake":
-      statusUpdateText =
-        "Your node is on standby as you do not have any staked SHM. Please stake a minimum of 10 SHM to start validating.";
-      break;
-    case "waiting-for-network":
-      statusUpdateText =
-        "Your node is trying to connect to the Shardeum network. If this status persists please reach out to us.";
-      break;
-    case "ready":
-      statusUpdateText =
-        "Your node is ready to join the network. It will be selected for validation soon.";
-      break;
-    case "selected":
-      statusUpdateText =
-        "Your node has been selected for validation and will start validating shortly.";
-      break;
-    case "standby":
-      statusUpdateText =
-        "Your node is currently on standby. It will be activated when needed by the network.";
-      break;
-    case "syncing":
-      statusUpdateText =
-        "Your node is currently syncing with the network. This process may take some time.";
-      break;
-    default:
-      break;
+const getStatusUpdateText = (nodeStatus: NodeStatus | undefined) => {
+  const status = nodeStatus?.state;
+  if (status === 'stopped' && nodeStatus?.exitStatus !== 'Exited cleanly') {
+    if (nodeStatus?.exitMessage) {
+      return <span>
+        Your node stopped unexpectedly: {nodeStatus.exitMessage}
+        <br/>
+        Please start the node to start earning rewards.
+      </span>;
+    }
+    return 'Your node stopped unexpectedly. Please start the node to start earning rewards.';
+  } else if (status === 'need-stake') {
+    return 'Your node is on standby as you do not have any staked SHM. Please stake a minimum of 10 SHM to start validating.';
+  } else if (status === 'waiting-for-network') {
+    return 'Your node is trying to connect to the Shardeum network. If this status persists please reach out to us.';
+  } else if (status === 'ready') {
+    return 'Your node is ready to join the network. It will be selected for validation soon.';
+  } else if (status === 'selected') {
+    return 'Your node has been selected for validation and will start validating shortly.';
+  } else if (status === 'standby') {
+    return 'Your node is currently on standby. It will be activated when needed by the network.';
+  } else if (status === 'syncing') {
+    return 'Your node is currently syncing with the network. This process may take some time.';
   }
-  return statusUpdateText;
+  return
 };
 
 const getBgColor = (state: string) => {
   switch (state) {
     case "active":
     case "selected":
-    case "ready": 
+    case "ready":
       return "successBg";
     case "stopped":
       return "dangerBg";
@@ -81,11 +69,13 @@ const getBorderColor = (state: string) => {
 };
 
 export const NodeStatusUpdate = () => {
+  const { nodeStatus } = useNodeStatus()
   const { currentStatus, reset } = useStatusUpdateStore((state: any) => ({
     currentStatus: state.currentStatus,
     reset: state.reset,
   }));
 
+  const statusUpdateText = getStatusUpdateText(nodeStatus);
   return (
     <div>
       {/* This hidden div ensures that Tailwind CSS classes are included in the final build */}
@@ -115,14 +105,14 @@ export const NodeStatusUpdate = () => {
           8
         </span>
       </div>
-      {currentStatus && (
+      {statusUpdateText && (
         <div
           className={`absolute top-0 left-10 flex gap-x-2 items-center px-4 py-2 rounded bg-${getBgColor(
             currentStatus
           )} border border-${getBorderColor(currentStatus)} border-t-0`}
         >
           <span className="bodyFg font-light text-xs ">
-            {getStatusUpdateText(currentStatus)}
+            {statusUpdateText}
           </span>
           <div>
             <XMarkIcon className="h-3 w-3 cursor-pointer" onClick={reset} />

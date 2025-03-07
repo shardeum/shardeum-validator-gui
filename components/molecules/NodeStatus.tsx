@@ -11,7 +11,6 @@ import {
   NotificationSeverity,
   NotificationType,
 } from "../../hooks/useNotificationsStore";
-import { wasLoggedOutKey } from "../../services/auth.service";
 import useStatusUpdateStore from "../../hooks/useStatusUpdateStore";
 
 export enum NodeState {
@@ -174,17 +173,12 @@ export const NodeStatus = ({ isWalletConnected}: {isWalletConnected: boolean}) =
     resetToast();
 
     if (previousNodeState !== currentNodeState) {
-      const wasLoggedOut = localStorage.getItem(wasLoggedOutKey) === "true";
       if (
-        wasLoggedOut &&
         ["active", "stopped", "waiting-for-network", "need-stake", "standby", "ready", "selected"].includes(
           nodeStatus?.state || ""
         )
       ) {
         setCurrentStatus(nodeStatus?.state || "");
-        localStorage.removeItem(wasLoggedOutKey);
-      } else if (!wasLoggedOut) {
-        setCurrentStatus("");
       }
 
       switch (nodeStatus?.state) {
