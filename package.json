@@ -18,7 +18,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@shardeum-foundation/lib-crypto-utils": "4.2.0-prerelease.1",
+    "@shardeum-foundation/lib-crypto-utils": "4.2.0-prerelease.2",
     "@heroicons/react": "2.0.18",
     "@rainbow-me/rainbowkit": "1.0.7",
     "@walletconnect/modal": "2.6.2",
