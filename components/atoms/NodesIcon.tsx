@@ -1,7 +1,7 @@
 type NodesIconProps = {
-  fillColor: string;
-  className?: string;
-};
+  fillColor: string
+  className?: string
+}
 
 export const NodesIcon = ({ fillColor, className }: NodesIconProps) => {
   return (
@@ -9,7 +9,7 @@ export const NodesIcon = ({ fillColor, className }: NodesIconProps) => {
       preserveAspectRatio="none"
       viewBox="0 0 16 17"
       fill={fillColor}
-      className={className || "h-3 w-3"}
+      className={className || 'h-3 w-3'}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -35,5 +35,5 @@ export const NodesIcon = ({ fillColor, className }: NodesIconProps) => {
         fill={fillColor}
       />
     </svg>
-  );
-};
+  )
+}

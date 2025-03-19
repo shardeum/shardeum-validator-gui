@@ -1,24 +1,24 @@
-import { useEffect, useRef } from "react";
-import useModalStore from "../../hooks/useModalStore";
+import { useEffect, useRef } from 'react'
+import useModalStore from '../../hooks/useModalStore'
 
 export const Modal = () => {
   const { showModal, resetModal, content } = useModalStore((state: any) => ({
     showModal: state.showModal,
     resetModal: state.resetModal,
     content: state.content,
-  }));
+  }))
 
-  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const dialogRef = useRef<HTMLDialogElement | null>(null)
 
   useEffect(() => {
     if (dialogRef.current) {
       if (showModal) {
-        dialogRef.current.showModal();
+        dialogRef.current.showModal()
       } else {
-        dialogRef.current.close();
+        dialogRef.current.close()
       }
     }
-  }, [showModal]);
+  }, [showModal])
 
   return (
     <>
@@ -29,15 +29,15 @@ export const Modal = () => {
           ref={dialogRef}
           onCancel={resetModal}
           onClick={() => {
-            resetModal();
+            resetModal()
           }}
         >
           <div
             id="modal-container"
             className="flex w-full justify-center items-center bg-transparent"
             onClick={(e) => {
-              if ((e.target as HTMLDivElement).id !== "modal-container") {
-                e.stopPropagation();
+              if ((e.target as HTMLDivElement).id !== 'modal-container') {
+                e.stopPropagation()
               }
             }}
           >
@@ -46,5 +46,5 @@ export const Modal = () => {
         </dialog>
       )}
     </>
-  );
-};
+  )
+}

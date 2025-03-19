@@ -1,9 +1,9 @@
-import { SupportOptions } from "./SupportOptions";
+import { SupportOptions } from './SupportOptions'
 
 type SupportDisplayProps = {
-  isVisible: boolean;
-  onClose: () => void;
-};
+  isVisible: boolean
+  onClose: () => void
+}
 
 export const SupportDisplay = ({ isVisible, onClose }: SupportDisplayProps) => {
   return (
@@ -14,5 +14,5 @@ export const SupportDisplay = ({ isVisible, onClose }: SupportDisplayProps) => {
         </div>
       )}
     </>
-  );
-};
+  )
+}

@@ -4,7 +4,7 @@ export interface NodeNetwork {
   desired: number
   syncing: number
   load: number
-  nodeLoad: {internal: number, external: number}
+  nodeLoad: { internal: number; external: number }
   txApplied: number
   txExpired: number
   txInjected: number

@@ -1,24 +1,20 @@
-import { Card } from "../layouts/Card";
-import { useNodeNetwork } from "../../hooks/useNodeNetwork";
+import { Card } from '../layouts/Card'
+import { useNodeNetwork } from '../../hooks/useNodeNetwork'
 
 export const NetworkSizeCard = () => {
-  const { network } = useNodeNetwork();
+  const { network } = useNodeNetwork()
 
   return (
     <Card>
       <div className="flex flex-col px-5 py-5">
         <div className="flex justify-between items-center">
           <div className="flex flex-col basis-0 grow">
-            <span className="font-semibold max-md:text-lg">
-              {network?.active || 0}
-            </span>
+            <span className="font-semibold max-md:text-lg">{network?.active || 0}</span>
             <span className="text-gray-600 text-xs">Active validators</span>
           </div>
           <div className="h-10 border-l w-1"></div>
           <div className="flex flex-col basis-0 grow ml-10">
-            <span className="font-semibold max-md:text-lg">
-              {network?.standby || 0}
-            </span>
+            <span className="font-semibold max-md:text-lg">{network?.standby || 0}</span>
             <span className="text-gray-600 text-xs">Standby validators</span>
           </div>
         </div>
@@ -39,5 +35,5 @@ export const NetworkSizeCard = () => {
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}

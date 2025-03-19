@@ -38,11 +38,11 @@ export const fetchWithTimeout = (url: string, options: RequestInit, timeout = 50
     }, timeout)
 
     fetch(url, options)
-      .then(response => {
+      .then((response) => {
         clearTimeout(timer)
         resolve(response)
       })
-      .catch(err => {
+      .catch((err) => {
         clearTimeout(timer)
         reject(err)
       })

@@ -1,66 +1,68 @@
-import { useEffect, useState } from "react";
-import rewardsCardBg from "../../assets/rewards-card.png";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
-import { Card } from "../layouts/Card";
-import { useAccount, useNetwork } from "wagmi";
-import { CHAIN_ID } from "../../pages/_app";
-import useModalStore from "../../hooks/useModalStore";
-import { ConfirmRedemptionModal } from "./ConfirmRedemptionModal";
-import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
-import { BgImage } from "../atoms/BgImage";
-import {useAccountStakeInfo} from '../../hooks/useAccountStakeInfo';
+import { useEffect, useState } from 'react'
+import rewardsCardBg from '../../assets/rewards-card.png'
+import { useNodeStatus } from '../../hooks/useNodeStatus'
+import { Card } from '../layouts/Card'
+import { useAccount, useNetwork } from 'wagmi'
+import { CHAIN_ID } from '../../pages/_app'
+import useModalStore from '../../hooks/useModalStore'
+import { ConfirmRedemptionModal } from './ConfirmRedemptionModal'
+import { MobileModalWrapper } from '../layouts/MobileModalWrapper'
+import { BgImage } from '../atoms/BgImage'
+import { useAccountStakeInfo } from '../../hooks/useAccountStakeInfo'
 
 function formatDate(date: Date) {
   // Format date and time separately
-  const datePart = date.toLocaleDateString("en-US", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-  const timePart = date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
+  const datePart = date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+  const timePart = date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: true,
-  });
+  })
 
   // Combine date and time parts
-  return `${datePart} ${timePart}`;
+  return `${datePart} ${timePart}`
 }
 
 export const RewardsCard = () => {
-  const { setShowModal, setContent, resetModal } = useModalStore(
-    (state: any) => ({
-      setShowModal: state.setShowModal,
-      setContent: state.setContent,
-      resetModal: state.resetModal,
-    })
-  );
-  const { nodeStatus } = useNodeStatus();
-  const { address, isConnected } = useAccount();
-  const { stakeInfo } = useAccountStakeInfo(address);
-  const { chain } = useNetwork();
+  const { setShowModal, setContent, resetModal } = useModalStore((state: any) => ({
+    setShowModal: state.setShowModal,
+    setContent: state.setContent,
+    resetModal: state.resetModal,
+  }))
+  const { nodeStatus } = useNodeStatus()
+  const { address, isConnected } = useAccount()
+  const { stakeInfo } = useAccountStakeInfo(address)
+  const { chain } = useNetwork()
   const [canRedeem, setCanRedeem] = useState(
     isConnected &&
-    chain?.id === CHAIN_ID &&
-    nodeStatus?.state === "stopped" &&
-    parseFloat(nodeStatus?.lockedStake || "0") > 0 &&
-    nodeStatus?.stakeState?.unlocked
-  );
+      chain?.id === CHAIN_ID &&
+      nodeStatus?.state === 'stopped' &&
+      parseFloat(nodeStatus?.lockedStake || '0') > 0 &&
+      nodeStatus?.stakeState?.unlocked
+  )
   useEffect(() => {
     setCanRedeem(
       isConnected &&
-      chain?.id === CHAIN_ID &&
-      nodeStatus?.state === "stopped" &&
-      parseFloat(nodeStatus?.lockedStake || "0") > 0
-    );
-  }, [nodeStatus?.state, nodeStatus?.lockedStake, isConnected, chain?.id]);
+        chain?.id === CHAIN_ID &&
+        nodeStatus?.state === 'stopped' &&
+        parseFloat(nodeStatus?.lockedStake || '0') > 0
+    )
+  }, [nodeStatus?.state, nodeStatus?.lockedStake, isConnected, chain?.id])
 
-  const hasStakeOnThisNode = parseFloat(stakeInfo?.stake ?? "0.0") > parseFloat("0.0") &&
+  const hasStakeOnThisNode =
+    parseFloat(stakeInfo?.stake ?? '0.0') > parseFloat('0.0') &&
     nodeStatus?.nomineeAddress != null &&
     stakeInfo?.nominee === nodeStatus?.nomineeAddress
 
-  const rewardsThisCycle = nodeStatus?.currentRewards && stakeInfo?.stake ? (parseFloat(nodeStatus?.currentRewards) - parseFloat(stakeInfo?.rewards)).toString() : "0"
+  const rewardsThisCycle =
+    nodeStatus?.currentRewards && stakeInfo?.stake
+      ? (parseFloat(nodeStatus?.currentRewards) - parseFloat(stakeInfo?.rewards)).toString()
+      : '0'
 
   return (
     <Card>
@@ -71,7 +73,9 @@ export const RewardsCard = () => {
               <div className="flex flex-col w-full gap-y-2">
                 <span className="font-semibold text-2xl flex gap-x-2">
                   <span>
-                    {parseFloat(!isConnected ? "0" : hasStakeOnThisNode ? rewardsThisCycle : stakeInfo?.rewards ?? "0").toFixed(2)}{" "}
+                    {parseFloat(
+                      !isConnected ? '0' : hasStakeOnThisNode ? rewardsThisCycle : stakeInfo?.rewards ?? '0'
+                    ).toFixed(2)}{' '}
                     SHM
                   </span>
                   {/* <span className="text-xs leading-9 bodyFg">(~0.00$)</span> */}
@@ -79,9 +83,7 @@ export const RewardsCard = () => {
                 <div className="text-xs flex justify-between w-full bodyFg">
                   <span>Earned since last validating cycle</span>
                   {nodeStatus?.lastActive && (
-                    <span className="max-md:hidden">
-                      {formatDate(new Date(nodeStatus?.lastActive))}
-                    </span>
+                    <span className="max-md:hidden">{formatDate(new Date(nodeStatus?.lastActive))}</span>
                   )}
                 </div>
               </div>
@@ -90,38 +92,30 @@ export const RewardsCard = () => {
           <hr className="mt-3" />
           <div className="flex justify-between">
             <span className="text-xs bodyFg">Total rewards earned</span>
-            <span className="font-semibold text-xs">
-              {nodeStatus?.currentRewards || (0.0).toFixed(2)} SHM
-            </span>
+            <span className="font-semibold text-xs">{nodeStatus?.currentRewards || (0.0).toFixed(2)} SHM</span>
           </div>
           <div>
             <button
               className={
                 `border border-gray-400 mt-3 px-3 py-1 text-sm rounded ` +
-                (canRedeem
-                  ? "text-primary"
-                  : `text-gray-400 ${nodeStatus?.state === "active" ? "tooltip" : ""
-                  }`)
+                (canRedeem ? 'text-primary' : `text-gray-400 ${nodeStatus?.state === 'active' ? 'tooltip' : ''}`)
               }
               data-tip="It is not possible to redeem rewards while you are validating.
               If absolutely necessary, use the force stop option in settings (Not Recommended)."
               disabled={!canRedeem}
               onClick={() => {
-                resetModal();
+                resetModal()
                 setContent(
-                  <MobileModalWrapper
-                    closeButtonRequired={false}
-                    contentOnTop={false}
-                  >
+                  <MobileModalWrapper closeButtonRequired={false} contentOnTop={false}>
                     <ConfirmRedemptionModal
-                      nominator={address?.toString() || ""}
-                      nominee={stakeInfo?.nominee ?? nodeStatus?.nomineeAddress ?? ""}
-                      currentRewards={parseFloat(stakeInfo?.rewards ?? nodeStatus?.currentRewards ?? "0")}
-                      currentStake={parseFloat(nodeStatus?.lockedStake || "0")}
+                      nominator={address?.toString() || ''}
+                      nominee={stakeInfo?.nominee ?? nodeStatus?.nomineeAddress ?? ''}
+                      currentRewards={parseFloat(stakeInfo?.rewards ?? nodeStatus?.currentRewards ?? '0')}
+                      currentStake={parseFloat(nodeStatus?.lockedStake || '0')}
                     ></ConfirmRedemptionModal>
                   </MobileModalWrapper>
-                );
-                setShowModal(true);
+                )
+                setShowModal(true)
               }}
             >
               Redeem Rewards
@@ -133,5 +127,5 @@ export const RewardsCard = () => {
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}

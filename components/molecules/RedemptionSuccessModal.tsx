@@ -1,20 +1,17 @@
-import useModalStore from "../../hooks/useModalStore";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import useModalStore from '../../hooks/useModalStore'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
 type RedemptionSuccessModalProps = {
-  stake: number;
-  rewards: number;
-};
+  stake: number
+  rewards: number
+}
 
-export const RedemptionSuccessModal = ({
-  stake,
-  rewards,
-}: RedemptionSuccessModalProps) => {
+export const RedemptionSuccessModal = ({ stake, rewards }: RedemptionSuccessModalProps) => {
   const { resetModal } = useModalStore((state: any) => ({
     resetModal: state.resetModal,
-  }));
-  const totalAmount = stake + rewards;
+  }))
+  const totalAmount = stake + rewards
 
   return (
     <div className="bg-white text-subtleFg flex flex-col p-4 max-w-sm w-full rounded">
@@ -23,7 +20,7 @@ export const RedemptionSuccessModal = ({
           <XMarkIcon
             className="h-3 w-3 cursor-pointer"
             onClick={() => {
-              resetModal();
+              resetModal()
             }}
           />
         </div>
@@ -34,18 +31,14 @@ export const RedemptionSuccessModal = ({
         <span className="text-lg font-semibold">Rewards Claimed</span>
 
         <span className="text-sm bodyFg text-center">
-          You&apos;ve successfully unstaked{" "}
-          <span className="font-semibold">{totalAmount.toFixed(2)} SHM</span>{" "}
-          into your wallet.
+          You&apos;ve successfully unstaked <span className="font-semibold">{totalAmount.toFixed(2)} SHM</span> into
+          your wallet.
         </span>
 
-        <button
-          className="w-full bg-primary text-white px-4 py-2 mt-2 rounded"
-          onClick={resetModal}
-        >
+        <button className="w-full bg-primary text-white px-4 py-2 mt-2 rounded" onClick={resetModal}>
           Continue
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

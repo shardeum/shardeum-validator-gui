@@ -1,7 +1,7 @@
 type ErrorIconProps = {
-  fillColor: string;
-  className?: string;
-};
+  fillColor: string
+  className?: string
+}
 
 export const ErrorIcon = ({ fillColor, className }: ErrorIconProps) => {
   return (
@@ -9,7 +9,7 @@ export const ErrorIcon = ({ fillColor, className }: ErrorIconProps) => {
       viewBox="0 0 12 13"
       preserveAspectRatio="none"
       fill={fillColor}
-      className={className || "h-3 w-3"}
+      className={className || 'h-3 w-3'}
       xmlns="http://www.w3.org/2000/svg"
     >
       <mask id="path-1-inside-1_1566_2292" fill="white">
@@ -23,5 +23,5 @@ export const ErrorIcon = ({ fillColor, className }: ErrorIconProps) => {
       <path d="M5.5 9.24805H6.5V8.24805H5.5V9.24805Z" fill={fillColor} />
       <path d="M5.5 4.74805V7.24805H6.5005L6.5 4.74805H5.5Z" fill={fillColor} />
     </svg>
-  );
-};
+  )
+}

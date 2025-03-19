@@ -1,62 +1,62 @@
 // src/pages/dashboard/index.tsx
-import { ArrowRightOnRectangleIcon, BellIcon } from "@heroicons/react/24/solid";
-import { Logo } from "../../components/atoms/Logo";
-import { Cog6ToothIcon } from "@heroicons/react/20/solid";
-import { WalletConnectButton } from "../../components/molecules/WalletConnectButton";
-import { ReactElement, useRef, useState } from "react";
-import { OverviewSidebar } from "../../components/organisms/OverviewSidebar";
-import { TabButton } from "../../components/atoms/TabButton";
-import Head from "next/head";
-import dashboardBg from "../../assets/dashboard-bg.webp";
-import notebookIcon from "../../assets/notebook-icon.svg";
-import { PerformanceDisplay } from "../../components/molecules/PerformanceDisplay";
-import { RewardsCard } from "../../components/molecules/RewardsCard";
-import { NetworkSizeCard } from "../../components/molecules/NetworkSizeCard";
-import { SettingsDisplay } from "../../components/organisms/SettingsDisplay";
-import { Bars3Icon, ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { LogsDisplay } from "../../components/organisms/LogsDisplay";
-import { NotificationsWindow } from "../../components/molecules/NotificationsWindow";
-import useNotificationsStore from "../../hooks/useNotificationsStore";
-import { ToastWindow } from "../../components/molecules/ToastWindow";
-import { useDevice } from "../../context/device";
-import { NodeStatusRibbon } from "../../components/molecules/NodeStatusRibbon";
-import { MobileModalWrapper } from "../../components/layouts/MobileModalWrapper";
-import useModalStore from "../../hooks/useModalStore";
-import { MobileMenu } from "../../components/molecules/MobileMenu";
-import { authService } from "../../services/auth.service";
-import { useGlobals } from "../../utils/globals";
-import { InformationPopupsDisplay } from "../../components/molecules/InformationPopupsDisplay";
-import { BgImage } from "../../components/atoms/BgImage";
+import { ArrowRightOnRectangleIcon, BellIcon } from '@heroicons/react/24/solid'
+import { Logo } from '../../components/atoms/Logo'
+import { Cog6ToothIcon } from '@heroicons/react/20/solid'
+import { WalletConnectButton } from '../../components/molecules/WalletConnectButton'
+import { ReactElement, useRef, useState } from 'react'
+import { OverviewSidebar } from '../../components/organisms/OverviewSidebar'
+import { TabButton } from '../../components/atoms/TabButton'
+import Head from 'next/head'
+import dashboardBg from '../../assets/dashboard-bg.webp'
+import notebookIcon from '../../assets/notebook-icon.svg'
+import { PerformanceDisplay } from '../../components/molecules/PerformanceDisplay'
+import { RewardsCard } from '../../components/molecules/RewardsCard'
+import { NetworkSizeCard } from '../../components/molecules/NetworkSizeCard'
+import { SettingsDisplay } from '../../components/organisms/SettingsDisplay'
+import { Bars3Icon, ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { LogsDisplay } from '../../components/organisms/LogsDisplay'
+import { NotificationsWindow } from '../../components/molecules/NotificationsWindow'
+import useNotificationsStore from '../../hooks/useNotificationsStore'
+import { ToastWindow } from '../../components/molecules/ToastWindow'
+import { useDevice } from '../../context/device'
+import { NodeStatusRibbon } from '../../components/molecules/NodeStatusRibbon'
+import { MobileModalWrapper } from '../../components/layouts/MobileModalWrapper'
+import useModalStore from '../../hooks/useModalStore'
+import { MobileMenu } from '../../components/molecules/MobileMenu'
+import { authService } from '../../services/auth.service'
+import { useGlobals } from '../../utils/globals'
+import { InformationPopupsDisplay } from '../../components/molecules/InformationPopupsDisplay'
+import { BgImage } from '../../components/atoms/BgImage'
 
 enum Content {
-  MAIN = "MAIN",
-  SETTINGS = "SETTINGS",
-  LOGS = "LOGS",
+  MAIN = 'MAIN',
+  SETTINGS = 'SETTINGS',
+  LOGS = 'LOGS',
 }
 
 const Dashboard = () => {
-  const overviewSectionRef = useRef(null);
-  const networkSizeSectionRef = useRef(null);
-  const performanceSectionRef = useRef(null);
+  const overviewSectionRef = useRef(null)
+  const networkSizeSectionRef = useRef(null)
+  const performanceSectionRef = useRef(null)
 
   const { showWindow, setShowWindow } = useNotificationsStore((state: any) => ({
     showWindow: state.showWindow,
     setShowWindow: state.setShowWindow,
-  }));
+  }))
 
-  const [contentPane, setContentPane] = useState<Content>(Content.MAIN);
+  const [contentPane, setContentPane] = useState<Content>(Content.MAIN)
   const setToSettingsDisplay = () => {
-    setContentPane(Content.SETTINGS);
-  };
+    setContentPane(Content.SETTINGS)
+  }
   const setToLogsDisplay = () => {
-    setContentPane(Content.LOGS);
-  };
-  const { isMobile } = useDevice();
+    setContentPane(Content.LOGS)
+  }
+  const { isMobile } = useDevice()
   const { setShowModal, setContent } = useModalStore((state: any) => ({
     setShowModal: state.setShowModal,
     setContent: state.setContent,
-  }));
-  const { apiBase } = useGlobals();
+  }))
+  const { apiBase } = useGlobals()
 
   return (
     <>
@@ -72,7 +72,7 @@ const Dashboard = () => {
                     <BellIcon
                       className="w-5 h-5 text-black cursor-pointer"
                       onClick={() => {
-                        setShowWindow(!showWindow);
+                        setShowWindow(!showWindow)
                       }}
                     />
                     <NotificationsWindow />
@@ -88,10 +88,7 @@ const Dashboard = () => {
                     onClick={setToSettingsDisplay}
                     className="w-5 h-5 text-black bg-white cursor-pointer"
                   />
-                  <WalletConnectButton
-                    toShowAddress={true}
-                    label="Connect Wallet"
-                  ></WalletConnectButton>
+                  <WalletConnectButton toShowAddress={true} label="Connect Wallet"></WalletConnectButton>
                   <ArrowRightOnRectangleIcon
                     className="h-5 w-5 text-black cursor-pointer tooltip tooltip-bottom"
                     data-tip="Logout"
@@ -124,7 +121,7 @@ const Dashboard = () => {
                   <button
                     className="flex gap-x-1 px-3 py-2 items-center rounded hover:scale-105 text-sm ease-in-out duration-200"
                     onClick={() => {
-                      setContentPane(Content.MAIN);
+                      setContentPane(Content.MAIN)
                     }}
                   >
                     <ChevronLeftIcon className="h-3 w-3 text-black stroke-2" />
@@ -145,35 +142,21 @@ const Dashboard = () => {
                     <div className="px-16 flex flex-col gap-y-12">
                       <InformationPopupsDisplay />
                       {/* Rewards */}
-                      <section
-                        id="overview"
-                        ref={overviewSectionRef}
-                        className="flex flex-col w-full"
-                      >
-                        <span className="font-medium text-base mb-1">
-                          Your Rewards
-                        </span>
+                      <section id="overview" ref={overviewSectionRef} className="flex flex-col w-full">
+                        <span className="font-medium text-base mb-1">Your Rewards</span>
                         <RewardsCard />
                       </section>
 
                       {/* Network Size */}
-                      <section
-                        id="network-size"
-                        ref={networkSizeSectionRef}
-                        className="flex flex-col w-full"
-                      >
-                        <span className="font-medium text-base mb-1">
-                          Network Size
-                        </span>
+                      <section id="network-size" ref={networkSizeSectionRef} className="flex flex-col w-full">
+                        <span className="font-medium text-base mb-1">Network Size</span>
                         <NetworkSizeCard />
                       </section>
 
                       {/* Performance */}
                       <section id="performance" ref={performanceSectionRef}>
                         <div className="flex items-center gap-x-3">
-                          <span className="font-medium text-base mb-1">
-                            Performance
-                          </span>
+                          <span className="font-medium text-base mb-1">Performance</span>
                         </div>
                         <PerformanceDisplay />
                       </section>
@@ -201,14 +184,11 @@ const Dashboard = () => {
               <div className="flex justify-between py-3 w-full items-center">
                 <Logo className="w-8" isMinimalLogo={true} />
                 <div className="flex items-center gap-x-3 relative">
-                  <WalletConnectButton
-                    toShowAddress={true}
-                    label="Connect Wallet"
-                  ></WalletConnectButton>
+                  <WalletConnectButton toShowAddress={true} label="Connect Wallet"></WalletConnectButton>
                   <BellIcon
                     className="w-5 h-5 text-black cursor-pointer"
                     onClick={() => {
-                      setShowWindow(true);
+                      setShowWindow(true)
                       setContent(
                         <MobileModalWrapper
                           closeButtonRequired={false}
@@ -217,8 +197,8 @@ const Dashboard = () => {
                         >
                           <NotificationsWindow />
                         </MobileModalWrapper>
-                      );
-                      setShowModal(true);
+                      )
+                      setShowModal(true)
                     }}
                   />
                   <ArrowRightOnRectangleIcon
@@ -230,23 +210,20 @@ const Dashboard = () => {
                     className="h-5 w-5 text-black cursor-pointer"
                     onClick={() => {
                       setContent(
-                        <MobileModalWrapper
-                          closeButtonRequired={true}
-                          contentOnTop={true}
-                        >
+                        <MobileModalWrapper closeButtonRequired={true} contentOnTop={true}>
                           <MobileMenu
                             logsOnClick={() => {
-                              setToLogsDisplay();
-                              setShowModal(false);
+                              setToLogsDisplay()
+                              setShowModal(false)
                             }}
                             settingsOnClick={() => {
-                              setToSettingsDisplay();
-                              setShowModal(false);
+                              setToSettingsDisplay()
+                              setShowModal(false)
                             }}
                           />
                         </MobileModalWrapper>
-                      );
-                      setShowModal(true);
+                      )
+                      setShowModal(true)
                     }}
                   />
                 </div>
@@ -255,7 +232,7 @@ const Dashboard = () => {
                 <button
                   className="flex gap-x-1 items-center rounded font-semibold text-sm ease-in-out duration-200"
                   onClick={() => {
-                    setContentPane(Content.MAIN);
+                    setContentPane(Content.MAIN)
                   }}
                 >
                   <ChevronLeftIcon className="h-3 w-3 text-black stroke-2" />
@@ -273,35 +250,21 @@ const Dashboard = () => {
                 <div className="px-4 flex flex-col gap-y-12">
                   <InformationPopupsDisplay />
                   {/* Rewards */}
-                  <section
-                    id="overview"
-                    ref={overviewSectionRef}
-                    className="flex flex-col w-full"
-                  >
-                    <span className="font-medium text-base mb-1">
-                      Your Rewards
-                    </span>
+                  <section id="overview" ref={overviewSectionRef} className="flex flex-col w-full">
+                    <span className="font-medium text-base mb-1">Your Rewards</span>
                     <RewardsCard />
                   </section>
 
                   {/* Network Size */}
-                  <section
-                    id="network-size"
-                    ref={networkSizeSectionRef}
-                    className="flex flex-col w-full"
-                  >
-                    <span className="font-medium text-base mb-1">
-                      Network Size
-                    </span>
+                  <section id="network-size" ref={networkSizeSectionRef} className="flex flex-col w-full">
+                    <span className="font-medium text-base mb-1">Network Size</span>
                     <NetworkSizeCard />
                   </section>
 
                   {/* Performance */}
                   <section id="performance" ref={performanceSectionRef}>
                     <div className="flex items-center gap-x-3">
-                      <span className="font-medium text-base mb-1">
-                        Performance
-                      </span>
+                      <span className="font-medium text-base mb-1">Performance</span>
                     </div>
                     <PerformanceDisplay />
                   </section>
@@ -316,17 +279,17 @@ const Dashboard = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
 Dashboard.getLayout = function getLayout(page: ReactElement) {
   return (
     <>
-      <Head >
+      <Head>
         <title>Shardeum Dashboard</title>
       </Head>
       <div className="bg-[$FAFAFA] relative">{page}</div>
     </>
-  );
-};
-export default Dashboard;
+  )
+}
+export default Dashboard

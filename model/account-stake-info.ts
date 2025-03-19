@@ -1,5 +1,5 @@
 export interface AccountStakeInfo {
-  stake: string,
-  nominee: string,
+  stake: string
+  nominee: string
   rewards: string
 }

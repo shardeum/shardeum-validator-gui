@@ -2,8 +2,8 @@ import { ErrorResponse } from './error'
 
 export type NodeStatus = {
   state: 'active' | 'standby' | 'stopped'
-  exitStatus: 'Exit with warning' | 'Exited cleanly' | 'Exit with error',
-  exitMessage: string,
+  exitStatus: 'Exit with warning' | 'Exited cleanly' | 'Exit with error'
+  exitMessage: string
   totalTimeValidating: number
   lastActive: string
   lockedStake: string
@@ -12,11 +12,11 @@ export type NodeStatus = {
   nominatorAddress: string
   currentRewards: string
   lastPayout: string
-  lifetimeEarnings: string,
+  lifetimeEarnings: string
   nodeInfo: {
     externalIp: string
-    externalPort: number,
-    internalPort: number,
+    externalPort: number
+    internalPort: number
     publicKey: string
   }
 }
@@ -25,7 +25,7 @@ export type NodeLogsResponse = string[] | ErrorResponse
 export type NodeStatusResponse = NodeStatus | ErrorResponse
 
 type LogsCleared = {
-  logsCleared: string[];
+  logsCleared: string[]
 }
 
 export type NodeClearLogsResponse = LogsCleared | ErrorResponse

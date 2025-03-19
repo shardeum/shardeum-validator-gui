@@ -15,10 +15,7 @@
     "plugin:no-unsanitized/DOM",
     "prettier"
   ],
-  "ignorePatterns": [
-    "**/api/**/*.ts",
-    "**/hooks/**/*.ts"
-  ],
+  "ignorePatterns": ["**/api/**/*.ts", "**/hooks/**/*.ts"],
   "rules": {
     "no-empty": [
       1,

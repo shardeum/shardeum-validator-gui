@@ -1,41 +1,39 @@
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import useNotificationsStore, {
-  NotificationInstance,
-} from "../../hooks/useNotificationsStore";
-import { NotificationIcon } from "./NotificationIcon";
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import useNotificationsStore, { NotificationInstance } from '../../hooks/useNotificationsStore'
+import { NotificationIcon } from './NotificationIcon'
 
 type NotificationBoxProps = {
-  notification: NotificationInstance;
-  deleteNotificationOnClosing?: boolean;
-  onClose?: () => void;
-};
+  notification: NotificationInstance
+  deleteNotificationOnClosing?: boolean
+  onClose?: () => void
+}
 
 export const timeSince = (timestamp: number) => {
-  const seconds = Math.floor((new Date().getTime() - timestamp) / 1000);
+  const seconds = Math.floor((new Date().getTime() - timestamp) / 1000)
 
-  let interval = seconds / 31536000;
+  let interval = seconds / 31536000
 
   if (interval > 1) {
-    return Math.floor(interval) + " years";
+    return Math.floor(interval) + ' years'
   }
-  interval = seconds / 2592000;
+  interval = seconds / 2592000
   if (interval > 1) {
-    return Math.floor(interval) + " months";
+    return Math.floor(interval) + ' months'
   }
-  interval = seconds / 86400;
+  interval = seconds / 86400
   if (interval > 1) {
-    return Math.floor(interval) + " days";
+    return Math.floor(interval) + ' days'
   }
-  interval = seconds / 3600;
+  interval = seconds / 3600
   if (interval > 1) {
-    return Math.floor(interval) + " hours";
+    return Math.floor(interval) + ' hours'
   }
-  interval = seconds / 60;
+  interval = seconds / 60
   if (interval > 1) {
-    return Math.floor(interval) + " minutes";
+    return Math.floor(interval) + ' minutes'
   }
-  return Math.floor(seconds) + " seconds";
-};
+  return Math.floor(seconds) + ' seconds'
+}
 
 export const NotificationBox = ({
   notification,
@@ -44,7 +42,7 @@ export const NotificationBox = ({
 }: NotificationBoxProps) => {
   const { removeNotification } = useNotificationsStore((state: any) => ({
     removeNotification: state.removeNotification,
-  }));
+  }))
 
   return (
     <div className="border rounded flex max-md:px-3 max-md:py-5 py-2 px-3 dropdown-300">
@@ -63,9 +61,7 @@ export const NotificationBox = ({
             <span className="text-sm max-md:max-w-[16rem] md:text-xs text-subtleFg md:font-semibold">
               {notification.title}
             </span>
-            <span className="bodyFg text-xs">
-              {timeSince(notification.timestamp)} ago
-            </span>
+            <span className="bodyFg text-xs">{timeSince(notification.timestamp)} ago</span>
           </div>
         </div>
         <div className="flex justify-end items-start">
@@ -73,15 +69,15 @@ export const NotificationBox = ({
             className="h-3 w-3 cursor-pointer"
             onClick={() => {
               if (deleteNotificationOnClosing) {
-                removeNotification(notification);
+                removeNotification(notification)
               }
               if (onClose) {
-                onClose();
+                onClose()
               }
             }}
           />
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

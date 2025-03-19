@@ -1,44 +1,36 @@
-import { NodePerformance } from "./node-performance";
+import { NodePerformance } from './node-performance'
 
 export interface NodeStatus {
-  performance: NodePerformance;
-  state:
-    | "active"
-    | "standby"
-    | "stopped"
-    | "syncing"
-    | "need-stake"
-    | "waiting-for-network"
-    | "ready"
-    | "selected";
-  exitStatus: "Exit with warning" | "Exited cleanly" | "Exit with error";
-  exitMessage: string;
-  totalTimeValidating: number;
-  lastActive: string;
-  lockedStake: string;
+  performance: NodePerformance
+  state: 'active' | 'standby' | 'stopped' | 'syncing' | 'need-stake' | 'waiting-for-network' | 'ready' | 'selected'
+  exitStatus: 'Exit with warning' | 'Exited cleanly' | 'Exit with error'
+  exitMessage: string
+  totalTimeValidating: number
+  lastActive: string
+  lockedStake: string
   stakeState: {
-    unlocked: boolean;
-    reason: string;
-    remainingTime: number;
-  };
-  stakeAddress: string;
-  stakeRequirement: string;
-  nominatorAddress: string;
-  nomineeAddress: string;
-  currentRewards: string;
-  lastPayout: string;
-  lifetimeEarnings: string;
-  lastRotationIndex: string;
+    unlocked: boolean
+    reason: string
+    remainingTime: number
+  }
+  stakeAddress: string
+  stakeRequirement: string
+  nominatorAddress: string
+  nomineeAddress: string
+  currentRewards: string
+  lastPayout: string
+  lifetimeEarnings: string
+  lastRotationIndex: string
   nodeInfo: {
     appData: {
-      activeVersion: string;
-      minVersion: string;
-      shardeumVersion: string;
-    };
-    externalIp: string;
-    externalPort: number;
-    internalPort: number;
-    publicKey: string;
-  };
-  isGenesisNode: boolean;
+      activeVersion: string
+      minVersion: string
+      shardeumVersion: string
+    }
+    externalIp: string
+    externalPort: number
+    internalPort: number
+    publicKey: string
+  }
+  isGenesisNode: boolean
 }

@@ -1,38 +1,27 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
 
 type ExpansionArrowProps = {
-  className?: string;
-  isUp?: boolean;
-  onClick?: () => void;
-  toReverseDirection?: boolean;
-};
+  className?: string
+  isUp?: boolean
+  onClick?: () => void
+  toReverseDirection?: boolean
+}
 
-export const ExpansionArrow = ({
-  className,
-  isUp = true,
-  onClick,
-  toReverseDirection = true,
-}: ExpansionArrowProps) => {
-  const [isUpward, setIsUpward] = useState(isUp);
+export const ExpansionArrow = ({ className, isUp = true, onClick, toReverseDirection = true }: ExpansionArrowProps) => {
+  const [isUpward, setIsUpward] = useState(isUp)
   const handleClick = () => {
     if (toReverseDirection) {
-      setIsUpward((prevState) => !prevState);
+      setIsUpward((prevState) => !prevState)
     }
     if (onClick) {
-      onClick();
+      onClick()
     }
-  };
+  }
 
   return isUpward ? (
-    <ChevronUpIcon
-      onClick={handleClick}
-      className={className || "h-3 w-3 stroke-2 cursor-pointer"}
-    />
+    <ChevronUpIcon onClick={handleClick} className={className || 'h-3 w-3 stroke-2 cursor-pointer'} />
   ) : (
-    <ChevronDownIcon
-      onClick={handleClick}
-      className={className || "h-3 w-3 stroke-2 cursor-pointer"}
-    />
-  );
-};
+    <ChevronDownIcon onClick={handleClick} className={className || 'h-3 w-3 stroke-2 cursor-pointer'} />
+  )
+}

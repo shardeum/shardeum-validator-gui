@@ -1,117 +1,102 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { GeistSans } from "geist/font";
-import { useAccount, useBalance } from "wagmi";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
-import { useStake } from "../../hooks/useStake";
-import useModalStore from "../../hooks/useModalStore";
-import useToastStore, { ToastSeverity } from "../../hooks/useToastStore";
-import {
-  NotificationSeverity,
-  NotificationType,
-} from "../../hooks/useNotificationsStore";
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { GeistSans } from 'geist/font'
+import { useAccount, useBalance } from 'wagmi'
+import { useNodeStatus } from '../../hooks/useNodeStatus'
+import { useStake } from '../../hooks/useStake'
+import useModalStore from '../../hooks/useModalStore'
+import useToastStore, { ToastSeverity } from '../../hooks/useToastStore'
+import { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
 
 export const AddStakeModal = () => {
   const { resetModal } = useModalStore((state: any) => ({
     resetModal: state.resetModal,
-  }));
+  }))
   const { setCurrentToast, resetToast } = useToastStore((state: any) => ({
     setCurrentToast: state.setCurrentToast,
     resetToast: state.resetToast,
-  }));
+  }))
 
-  const stakeInputId = "stakeInput";
+  const stakeInputId = 'stakeInput'
 
-  const { address } = useAccount();
-  const { data } = useBalance({ address });
-  const { nodeStatus } = useNodeStatus();
-  const stakeInputRef = useRef<HTMLInputElement>(null);
-  const [stakedAmount, setStakedAmount] = useState(0);
+  const { address } = useAccount()
+  const { data } = useBalance({ address })
+  const { nodeStatus } = useNodeStatus()
+  const stakeInputRef = useRef<HTMLInputElement>(null)
+  const [stakedAmount, setStakedAmount] = useState(0)
   const minimumStakeRequirement = useMemo(() => {
-    return Math.max(
-      parseFloat(nodeStatus?.stakeRequirement || "10") -
-        parseFloat(nodeStatus?.lockedStake || "0"),
-      0
-    );
-  }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake]);
+    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
+  }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
 
-  const {
-    sendTransaction,
-    handleStakeChange,
-    setNomineeAddress,
-    isEmpty,
-    isLoading,
-  } = useStake({
-    nominator: address?.toString() || "",
-    nominee: nodeStatus?.nomineeAddress || "",
+  const { sendTransaction, handleStakeChange, setNomineeAddress, isEmpty, isLoading } = useStake({
+    nominator: address?.toString() || '',
+    nominee: nodeStatus?.nomineeAddress || '',
     stakeAmount: minimumStakeRequirement.toString(),
     totalStaked: nodeStatus?.lockedStake ? Number(nodeStatus?.lockedStake) : 0,
     onStake: (wasTxnSuccessful: boolean) => {
-      resetToast();
+      resetToast()
       if (wasTxnSuccessful) {
         setCurrentToast({
           severity: ToastSeverity.SUCCESS,
-          title: "Stake Added",
+          title: 'Stake Added',
           description: `${stakedAmount.toFixed(2)} SHM staked Successfully`,
           followupNotification: {
-            title: "Stake Added",
+            title: 'Stake Added',
             type: NotificationType.REWARD,
             severity: NotificationSeverity.SUCCESS,
           },
-        });
+        })
       } else {
         setCurrentToast({
           severity: ToastSeverity.DANGER,
-          title: "Staking Unsuccessful",
+          title: 'Staking Unsuccessful',
           followupNotification: {
-            title: "Staking Unsuccessful",
+            title: 'Staking Unsuccessful',
             type: NotificationType.REWARD,
             severity: NotificationSeverity.DANGER,
           },
-        });
+        })
       }
     },
-  });
+  })
 
   useEffect(() => {
-    const nomineeAddress = nodeStatus?.nomineeAddress;
+    const nomineeAddress = nodeStatus?.nomineeAddress
     if (nomineeAddress) {
-      setNomineeAddress(nomineeAddress);
+      setNomineeAddress(nomineeAddress)
     }
-  }, [nodeStatus?.nomineeAddress, setNomineeAddress]);
+  }, [nodeStatus?.nomineeAddress, setNomineeAddress])
 
   useEffect(() => {
     if (isLoading) {
       setCurrentToast({
         severity: ToastSeverity.LOADING,
-        title: "Processing Adding Stake",
-        description: "Your add stake transaction is in process.",
-      });
+        title: 'Processing Adding Stake',
+        description: 'Your add stake transaction is in process.',
+      })
     }
-  }, [isLoading]);
+  }, [isLoading])
 
   return (
     <>
       {nodeStatus?.nomineeAddress && (
         <div className="bg-white text-subtleFg flex flex-col p-4 md:max-w-lg max-h-48 w-full rounded gap-y-2">
           <div className="flex justify-between">
-            <span className="font-semibold text-subtleFg text-lg">
-              Add Stake
-            </span>
+            <span className="font-semibold text-subtleFg text-lg">Add Stake</span>
             <XMarkIcon
               className="h-3 w-3 cursor-pointer"
               onClick={() => {
                 if (stakeInputRef.current) {
-                  stakeInputRef.current.value = "";
+                  stakeInputRef.current.value = ''
                 }
-                resetModal();
+                resetModal()
               }}
             />
           </div>
           <div
             className={
-              "flex items-center py-2 px-3 rounded-md border border-b-2 bg-white " +
-              (isEmpty ? "" : "border-b-indigo-500")
+              'flex items-center py-2 px-3 rounded-md border border-b-2 bg-white ' +
+              (isEmpty ? '' : 'border-b-indigo-500')
             }
           >
             <input
@@ -124,33 +109,24 @@ export const AddStakeModal = () => {
               className="outline-none flex-1 bg-white"
               disabled={isLoading}
               onChange={(e) => {
-                const amount = e.target.value;
+                const amount = e.target.value
                 if (amount) {
                   const trunc = (num: string, pres: number) => {
-                    const split = num.split(".")
-                    return split.length > 1 ? split[0] + "." + split[1].substring(0, pres) : num
+                    const split = num.split('.')
+                    return split.length > 1 ? split[0] + '.' + split[1].substring(0, pres) : num
                   }
-                  setStakedAmount(parseFloat(trunc(amount, 15)));
+                  setStakedAmount(parseFloat(trunc(amount, 15)))
                 }
-                handleStakeChange(e);
+                handleStakeChange(e)
               }}
             />
           </div>
           <div className="flex flex-col w-full mt-2">
             <div className="flex items-center"></div>
             <div className="flex justify-between">
-              <div
-                className={
-                  "text-xs " +
-                  (stakedAmount < minimumStakeRequirement
-                    ? "text-dangerFg"
-                    : "text-black")
-                }
-              >
+              <div className={'text-xs ' + (stakedAmount < minimumStakeRequirement ? 'text-dangerFg' : 'text-black')}>
                 <span>Minimum stake requirement: </span>
-                <span className="font-semibold">
-                  {nodeStatus?.stakeRequirement || "10"} SHM
-                </span>
+                <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
               </div>
               {data?.formatted && (
                 <div className="text-xs">
@@ -167,14 +143,14 @@ export const AddStakeModal = () => {
                 disabled={isEmpty || stakedAmount < minimumStakeRequirement}
                 className={
                   (isEmpty || stakedAmount < minimumStakeRequirement
-                    ? "bg-gray-300"
-                    : "bg-indigo-600 hover:bg-indigo-700") +
-                  " text-white text-sm font-semibold py-2 px-4 rounded-md flex justify-center ease-in-out duration-300 w-full " +
+                    ? 'bg-gray-300'
+                    : 'bg-indigo-600 hover:bg-indigo-700') +
+                  ' text-white text-sm font-semibold py-2 px-4 rounded-md flex justify-center ease-in-out duration-300 w-full ' +
                   GeistSans.className
                 }
                 onClick={async () => {
-                  await sendTransaction();
-                  resetModal();
+                  await sendTransaction()
+                  resetModal()
                 }}
               >
                 Stake
@@ -187,7 +163,7 @@ export const AddStakeModal = () => {
               >
                 <div className="spinner flex items-center justify-center mr-3">
                   <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-                </div>{" "}
+                </div>{' '}
                 Confirming
               </button>
             )}
@@ -218,5 +194,5 @@ export const AddStakeModal = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}

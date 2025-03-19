@@ -1,23 +1,23 @@
-import { CpuChipIcon } from "@heroicons/react/24/solid";
-import { Card } from "../layouts/Card";
-import { UsageBar } from "../atoms/UsageBar";
-import ramIcon from "../../assets/ram-icon.svg";
-import diskIcon from "../../assets/disk-icon.svg";
-import networkIcon from "../../assets/network-icon.svg";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
-import { useNodePerformance } from "../../hooks/useNodePerformance";
-import { useNodeNetwork } from "../../hooks/useNodeNetwork";
-import { BgImage } from "../atoms/BgImage";
+import { CpuChipIcon } from '@heroicons/react/24/solid'
+import { Card } from '../layouts/Card'
+import { UsageBar } from '../atoms/UsageBar'
+import ramIcon from '../../assets/ram-icon.svg'
+import diskIcon from '../../assets/disk-icon.svg'
+import networkIcon from '../../assets/network-icon.svg'
+import { useNodeStatus } from '../../hooks/useNodeStatus'
+import { useNodePerformance } from '../../hooks/useNodePerformance'
+import { useNodeNetwork } from '../../hooks/useNodeNetwork'
+import { BgImage } from '../atoms/BgImage'
 
 export const PerformanceDisplay = () => {
-  const { performance } = useNodePerformance();
-  const { nodeStatus } = useNodeStatus();
-  const { network } = useNodeNetwork();
+  const { performance } = useNodePerformance()
+  const { nodeStatus } = useNodeStatus()
+  const { network } = useNodeNetwork()
 
-  const cpuUsage = nodeStatus?.performance?.cpuPercentage || 0;
-  const ramUsage = nodeStatus?.performance?.memPercentage || 0;
-  const diskUsage = nodeStatus?.performance?.diskPercentage || 0;
-  const networkUsage = performance?.[0]?.network || 0;
+  const cpuUsage = nodeStatus?.performance?.cpuPercentage || 0
+  const ramUsage = nodeStatus?.performance?.memPercentage || 0
+  const diskUsage = nodeStatus?.performance?.diskPercentage || 0
+  const networkUsage = performance?.[0]?.network || 0
 
   return (
     <div className="flex flex-col gap-y-5">
@@ -31,9 +31,7 @@ export const PerformanceDisplay = () => {
                 <CpuChipIcon className="h-5 w-5 text-gray-400" />
                 <span className="text-gray-600 ml-3">CPU</span>
               </div>
-              <span className="font-semibold text-xl md:text-lg">
-                {cpuUsage.toFixed(2)}%
-              </span>
+              <span className="font-semibold text-xl md:text-lg">{cpuUsage.toFixed(2)}%</span>
               <UsageBar usage={cpuUsage} />
             </div>
             <div className="h-full border w-0"></div>
@@ -46,9 +44,7 @@ export const PerformanceDisplay = () => {
                 </span>
                 <span className="text-gray-600 ml-3">Disk</span>
               </div>
-              <span className="font-semibold text-xl md:text-lg">
-                {diskUsage.toFixed(2)}%
-              </span>
+              <span className="font-semibold text-xl md:text-lg">{diskUsage.toFixed(2)}%</span>
               <UsageBar usage={diskUsage} />
             </div>
           </div>
@@ -62,9 +58,7 @@ export const PerformanceDisplay = () => {
                 </span>
                 <span className="text-gray-600 ml-3">RAM</span>
               </div>
-              <span className="font-semibold text-xl md:text-lg">
-                {ramUsage.toFixed(2)}%
-              </span>
+              <span className="font-semibold text-xl md:text-lg">{ramUsage.toFixed(2)}%</span>
               <UsageBar usage={ramUsage} />
             </div>
 
@@ -76,9 +70,7 @@ export const PerformanceDisplay = () => {
                 </span>
                 <span className="text-gray-600 ml-3">Network</span>
               </div>
-              <span className="font-semibold text-xl md:text-lg">
-                {networkUsage.toFixed(2)}%
-              </span>
+              <span className="font-semibold text-xl md:text-lg">{networkUsage.toFixed(2)}%</span>
               <UsageBar usage={networkUsage} />
             </div>
           </div>
@@ -93,27 +85,23 @@ export const PerformanceDisplay = () => {
           <div className="flex justify-between items-center">
             <span className="text-sm">Node Throughput</span>
             <span className="font-semibold text-sm">
-              {Number.isFinite(network?.txApplied) ? network?.txApplied : "N/A"}
+              {Number.isFinite(network?.txApplied) ? network?.txApplied : 'N/A'}
             </span>
           </div>
           <hr className="my-3" />
           <div className="flex justify-between items-center">
             <span className="text-sm">Transaction Processed</span>
             <span className="font-semibold text-sm">
-              {Number.isFinite(network?.txProcessed)
-                ? network?.txProcessed
-                : "N/A"}
+              {Number.isFinite(network?.txProcessed) ? network?.txProcessed : 'N/A'}
             </span>
           </div>
           <hr className="my-3" />
           <div className="flex justify-between items-center">
             <span className="text-sm">State Storage Usage</span>
-            <span className="font-semibold text-sm">
-              {nodeStatus?.performance?.stateStorage || "N/A"}
-            </span>
+            <span className="font-semibold text-sm">{nodeStatus?.performance?.stateStorage || 'N/A'}</span>
           </div>
         </div>
       </Card>
     </div>
-  );
-};
+  )
+}
