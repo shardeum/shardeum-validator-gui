@@ -1,14 +1,14 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import LoadingButton from "./LoadingButton";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { usePassword } from "../hooks/usePasswordChange";
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import LoadingButton from './LoadingButton'
+import { ArrowRightIcon } from '@heroicons/react/20/solid'
+import { usePassword } from '../hooks/usePasswordChange'
 
 type FormData = {
-  currentPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
-};
+  currentPassword: string
+  newPassword: string
+  confirmNewPassword: string
+}
 
 const ResetPasswordForm = () => {
   const {
@@ -18,16 +18,16 @@ const ResetPasswordForm = () => {
     setError,
     formState: { errors, isValid },
   } = useForm<FormData>({
-    mode: "onChange",
-  });
-  const { changePassword, isLoading } = usePassword({ setError });
+    mode: 'onChange',
+  })
+  const { changePassword, isLoading } = usePassword({ setError })
 
   const onSubmit = (data: FormData) => {
-    changePassword(data.currentPassword, data.newPassword);
-  };
+    changePassword(data.currentPassword, data.newPassword)
+  }
 
   // use watch to get the current password value to confirm
-  const password = watch("newPassword", "");
+  const password = watch('newPassword', '')
 
   return (
     <>
@@ -39,8 +39,8 @@ const ResetPasswordForm = () => {
             className="bg-white text-black border px-1"
             id="currentPassword"
             type="password"
-            {...register("currentPassword", {
-              required: "This field is required",
+            {...register('currentPassword', {
+              required: 'This field is required',
             })}
           />
         </div>
@@ -54,7 +54,7 @@ const ResetPasswordForm = () => {
             className="bg-white text-black border px-1"
             id="newPassword"
             type="password"
-            {...register("newPassword", { required: "This field is required" })}
+            {...register('newPassword', { required: 'This field is required' })}
           />
         </div>
         <span className="text-right text-sm text-warning">
@@ -67,33 +67,25 @@ const ResetPasswordForm = () => {
             className="bg-white text-black border px-1"
             id="confirmNewPassword"
             type="password"
-            {...register("confirmNewPassword", {
-              required: "This field is required",
-              validate: (value) =>
-                value === password || "The passwords do not match",
+            {...register('confirmNewPassword', {
+              required: 'This field is required',
+              validate: (value) => value === password || 'The passwords do not match',
             })}
           />
         </div>
         <span className="text-right text-sm text-warning">
-          {errors.confirmNewPassword && (
-            <p>{errors.confirmNewPassword.message}</p>
-          )}
+          {errors.confirmNewPassword && <p>{errors.confirmNewPassword.message}</p>}
         </span>
 
         <div className="flex justify-end mt-2">
-          <LoadingButton
-            className="btn btn-primary"
-            isLoading={isLoading}
-            disabled={!isValid}
-            type="submit"
-          >
+          <LoadingButton className="btn btn-primary" isLoading={isLoading} disabled={!isValid} type="submit">
             Submit
             <ArrowRightIcon className="h-5 w-5 inline ml-2" />
           </LoadingButton>
         </div>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default ResetPasswordForm;
+export default ResetPasswordForm

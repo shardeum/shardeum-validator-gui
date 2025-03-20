@@ -1,6 +1,6 @@
 interface MetaMaskError {
-  code: number,
-  message: string,
+  code: number
+  message: string
   stack: string
 }
 

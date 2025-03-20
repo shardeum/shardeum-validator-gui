@@ -1,7 +1,7 @@
 type StepsIconProps = {
-  fillColor: string;
-  className?: string;
-};
+  fillColor: string
+  className?: string
+}
 
 export const StepsIcon = ({ fillColor, className }: StepsIconProps) => {
   return (
@@ -9,7 +9,7 @@ export const StepsIcon = ({ fillColor, className }: StepsIconProps) => {
       preserveAspectRatio="none"
       viewBox="0 0 8 9"
       fill={fillColor}
-      className={className || "h-3 w-3"}
+      className={className || 'h-3 w-3'}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -19,5 +19,5 @@ export const StepsIcon = ({ fillColor, className }: StepsIconProps) => {
         fill={fillColor}
       />
     </svg>
-  );
-};
+  )
+}

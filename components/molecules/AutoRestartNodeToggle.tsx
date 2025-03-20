@@ -1,16 +1,13 @@
-import { useState } from "react";
-import { Card } from "../layouts/Card";
+import { useState } from 'react'
+import { Card } from '../layouts/Card'
 
 type AutoRestartNodeToggleProps = {
-  isOn: boolean;
-  onClick: () => Promise<void>;
-};
+  isOn: boolean
+  onClick: () => Promise<void>
+}
 
-export const AutoRestartNodeToggle = ({
-  isOn,
-  onClick,
-}: AutoRestartNodeToggleProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const AutoRestartNodeToggle = ({ isOn, onClick }: AutoRestartNodeToggleProps) => {
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <Card>
@@ -22,9 +19,9 @@ export const AutoRestartNodeToggle = ({
               type="checkbox"
               checked={isOn}
               onClick={async () => {
-                setIsLoading(true);
-                await onClick();
-                setIsLoading(false);
+                setIsLoading(true)
+                await onClick()
+                setIsLoading(false)
               }}
               className="sr-only peer"
             />
@@ -37,10 +34,10 @@ export const AutoRestartNodeToggle = ({
           </label>
         </div>
         <span className="break-normal text-sm bodyFg max-w-xl">
-          You can set the node to auto-restart by toggling this on. This will
-          enable your node to automatically start when stopped
+          You can set the node to auto-restart by toggling this on. This will enable your node to automatically start
+          when stopped
         </span>
       </div>
     </Card>
-  );
-};
+  )
+}

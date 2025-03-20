@@ -1,18 +1,15 @@
-import { ArrowUpRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import discordIcon from "../../assets/discord-icon.svg";
-import telegramIcon from "../../assets/telegram-icon.svg";
-import githubIcon from "../../assets/github-icon.svg";
-import envelopeIcon from "../../assets/envelope-icon.svg";
-import Link from "next/link";
-import {
-  VALIDATOR_GUI_DOCS_URL,
-  VALIDATOR_GUI_FAQS_URL,
-} from "../../pages/onboarding";
-import { BgImage } from "../atoms/BgImage";
+import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import discordIcon from '../../assets/discord-icon.svg'
+import telegramIcon from '../../assets/telegram-icon.svg'
+import githubIcon from '../../assets/github-icon.svg'
+import envelopeIcon from '../../assets/envelope-icon.svg'
+import Link from 'next/link'
+import { VALIDATOR_GUI_DOCS_URL, VALIDATOR_GUI_FAQS_URL } from '../../pages/onboarding'
+import { BgImage } from '../atoms/BgImage'
 
 type SupportOptionsProps = {
-  onClose: () => void;
-};
+  onClose: () => void
+}
 
 export const SupportOptions = ({ onClose }: SupportOptionsProps) => {
   return (
@@ -38,9 +35,7 @@ export const SupportOptions = ({ onClose }: SupportOptionsProps) => {
               <span className="font-semibold">Join Discord</span>
               <ArrowUpRightIcon className="h-2.5 w-3 text-gray-500" />
             </Link>
-            <span className="bodyFg font-light">
-              Get help from community and core contributors of Shardeum.
-            </span>
+            <span className="bodyFg font-light">Get help from community and core contributors of Shardeum.</span>
           </div>
         </div>
         <hr className="my-2" />
@@ -85,9 +80,7 @@ export const SupportOptions = ({ onClose }: SupportOptionsProps) => {
               <span className="font-semibold">View Github</span>
               <ArrowUpRightIcon className="h-2.5 w-3 text-gray-500" />
             </Link>
-            <span className="bodyFg font-light">
-              View validator GUI issues repository on Github.
-            </span>
+            <span className="bodyFg font-light">View validator GUI issues repository on Github.</span>
           </div>
         </div>
         {/* <hr className="my-2" /> */}
@@ -118,16 +111,12 @@ export const SupportOptions = ({ onClose }: SupportOptionsProps) => {
       </div>
       <div className="flex mt-4 gap-x-3 w-full">
         <Link href={VALIDATOR_GUI_FAQS_URL} target="_blank" className="w-full">
-          <button className="text-primary border py-1.5 px-4 text-sm rounded font-medium w-full">
-            FAQs
-          </button>
+          <button className="text-primary border py-1.5 px-4 text-sm rounded font-medium w-full">FAQs</button>
         </Link>
         <Link href={VALIDATOR_GUI_DOCS_URL} target="_blank">
-          <button className="text-primary border py-1.5 px-4 text-sm rounded font-medium">
-            Documentation
-          </button>
+          <button className="text-primary border py-1.5 px-4 text-sm rounded font-medium">Documentation</button>
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}

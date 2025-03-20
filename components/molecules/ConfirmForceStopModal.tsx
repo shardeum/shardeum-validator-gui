@@ -1,27 +1,22 @@
-import {
-  ExclamationTriangleIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import useModalStore from "../../hooks/useModalStore";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
+import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import useModalStore from '../../hooks/useModalStore'
+import { useNodeStatus } from '../../hooks/useNodeStatus'
 
 export const ConfirmForceStopModal = () => {
-  const { stopNode, isLoading } = useNodeStatus();
+  const { stopNode, isLoading } = useNodeStatus()
 
   const { resetModal } = useModalStore((state: any) => ({
     resetModal: state.resetModal,
-  }));
+  }))
 
   return (
     <div className="bg-white text-subtleFg flex flex-col p-4 max-w-lg w-full gap-y-3 rounded">
       <div className="flex justify-between items-center">
-        <span className="font-semibold text-subtleFg text-lg">
-          Confirm Force Stop Node
-        </span>
+        <span className="font-semibold text-subtleFg text-lg">Confirm Force Stop Node</span>
         <XMarkIcon
           className="h-3 w-3 cursor-pointer"
           onClick={() => {
-            resetModal();
+            resetModal()
           }}
         />
       </div>
@@ -35,8 +30,7 @@ export const ConfirmForceStopModal = () => {
           <ExclamationTriangleIcon className="h-5 w-5" />
         </div>
         <span className="break-words text-sm leading-5 max-w-md basis-0 grow">
-          It is not recommended to force stop node while validating as you may
-          lose rewards earned in the current cycle.
+          It is not recommended to force stop node while validating as you may lose rewards earned in the current cycle.
         </span>
       </div>
       <hr className="my-1" />
@@ -49,7 +43,7 @@ export const ConfirmForceStopModal = () => {
           >
             <div className="spinner flex items-center justify-center mr-3">
               <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-            </div>{" "}
+            </div>{' '}
             Stopping node
           </button>
         )}
@@ -58,7 +52,7 @@ export const ConfirmForceStopModal = () => {
             <button
               className="text-primary text-sm px-3 py-2 border border-bodyFg rounded max-w-[12rem] w-full"
               onClick={() => {
-                resetModal();
+                resetModal()
               }}
             >
               Don&apos;t Stop
@@ -66,8 +60,8 @@ export const ConfirmForceStopModal = () => {
             <button
               className="text-sm px-3 py-2 border border-bodyFg rounded max-w-[12rem] w-full text-dangerFg font-semibold"
               onClick={async () => {
-                await stopNode();
-                resetModal();
+                await stopNode()
+                resetModal()
               }}
             >
               Force Stop Node
@@ -76,5 +70,5 @@ export const ConfirmForceStopModal = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}

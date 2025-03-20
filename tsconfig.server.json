@@ -1,9 +1,9 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      "module": "commonjs",
-      "outDir": "build",
-      "noEmit": false
-    },
-    "include": ["api/**/*.ts"]
-  }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "build",
+    "noEmit": false
+  },
+  "include": ["api/**/*.ts"]
+}

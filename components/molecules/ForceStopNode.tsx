@@ -1,27 +1,22 @@
-import useModalStore from "../../hooks/useModalStore";
-import { useNodeStatus } from "../../hooks/useNodeStatus";
-import { Card } from "../layouts/Card";
-import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
-import { ConfirmForceStopModal } from "./ConfirmForceStopModal";
+import useModalStore from '../../hooks/useModalStore'
+import { useNodeStatus } from '../../hooks/useNodeStatus'
+import { Card } from '../layouts/Card'
+import { MobileModalWrapper } from '../layouts/MobileModalWrapper'
+import { ConfirmForceStopModal } from './ConfirmForceStopModal'
 
 type ForceStopNodeProps = {
-  isEnabled: boolean;
-  needsConfirmation: boolean;
-};
+  isEnabled: boolean
+  needsConfirmation: boolean
+}
 
-export const ForceStopNode = ({
-  isEnabled,
-  needsConfirmation,
-}: ForceStopNodeProps) => {
-  const { stopNode, isLoading } = useNodeStatus();
+export const ForceStopNode = ({ isEnabled, needsConfirmation }: ForceStopNodeProps) => {
+  const { stopNode, isLoading } = useNodeStatus()
 
-  const { setShowModal, setContent, resetModal } = useModalStore(
-    (state: any) => ({
-      setShowModal: state.setShowModal,
-      setContent: state.setContent,
-      resetModal: state.resetModal,
-    })
-  );
+  const { setShowModal, setContent, resetModal } = useModalStore((state: any) => ({
+    setShowModal: state.setShowModal,
+    setContent: state.setContent,
+    resetModal: state.resetModal,
+  }))
 
   return (
     <div className="flex flex-col">
@@ -31,23 +26,22 @@ export const ForceStopNode = ({
             <div className="flex flex-col gap-y-2 w-full">
               <span className="font-semibold">Force Stop Node</span>
               <span className="bodyFg text-sm">
-                This action will try to forcefully stop your node out of
-                validation queue.
+                This action will try to forcefully stop your node out of validation queue.
               </span>
             </div>
             <div className="flex w-full justify-end max-md:mt-3">
               {!isLoading && (
                 <button
                   className={
-                    "h-10 border-gray-400 border text-sm px-3 rounded font-semibold text-dangerFg " +
-                    (isEnabled ? "" : "text-gray-400")
+                    'h-10 border-gray-400 border text-sm px-3 rounded font-semibold text-dangerFg ' +
+                    (isEnabled ? '' : 'text-gray-400')
                   }
                   disabled={!isEnabled}
                   onClick={() => {
                     if (!needsConfirmation) {
-                      stopNode();
+                      stopNode()
                     } else {
-                      resetModal();
+                      resetModal()
                       setContent(
                         <MobileModalWrapper
                           closeButtonRequired={false}
@@ -56,8 +50,8 @@ export const ForceStopNode = ({
                         >
                           <ConfirmForceStopModal />
                         </MobileModalWrapper>
-                      );
-                      setShowModal(true);
+                      )
+                      setShowModal(true)
                     }
                   }}
                 >
@@ -71,7 +65,7 @@ export const ForceStopNode = ({
                 >
                   <div className="spinner flex items-center justify-center mr-3">
                     <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-                  </div>{" "}
+                  </div>{' '}
                   Stopping node
                 </button>
               )}
@@ -80,14 +74,11 @@ export const ForceStopNode = ({
         </div>
       </Card>
       <div className="flex mt-1 ml-1">
-        <span className="text-xs font-semibold text-dangerFg">
-          Warning: &nbsp;
-        </span>
+        <span className="text-xs font-semibold text-dangerFg">Warning: &nbsp;</span>
         <span className="text-xs font-light bodyBg">
-          Force stopping a node while it&apos;s validating will slash your
-          rewards.
+          Force stopping a node while it&apos;s validating will slash your rewards.
         </span>
       </div>
     </div>
-  );
-};
+  )
+}

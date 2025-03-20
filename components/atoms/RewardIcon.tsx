@@ -1,7 +1,7 @@
 type RewardIconProps = {
-  fillColor: string;
-  className?: string;
-};
+  fillColor: string
+  className?: string
+}
 
 export const RewardIcon = ({ fillColor, className }: RewardIconProps) => {
   return (
@@ -9,7 +9,7 @@ export const RewardIcon = ({ fillColor, className }: RewardIconProps) => {
       preserveAspectRatio="none"
       viewBox="0 0 10 11"
       fill={fillColor}
-      className={className || "h-3 w-3"}
+      className={className || 'h-3 w-3'}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -25,5 +25,5 @@ export const RewardIcon = ({ fillColor, className }: RewardIconProps) => {
         fill={fillColor}
       />
     </svg>
-  );
-};
+  )
+}

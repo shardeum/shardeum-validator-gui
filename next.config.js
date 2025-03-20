@@ -3,7 +3,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  distDir: "build",
+  distDir: 'build',
   eslint: {
     // We want to handle linting in the IDE, not during build
     ignoreDuringBuilds: true,
@@ -11,7 +11,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  transpilePackages: ["geist"],
+  transpilePackages: ['geist'],
   async headers() {
     return [
       {
@@ -43,8 +43,8 @@ const nextConfig = {
           },
         ],
       },
-    ];
+    ]
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

@@ -1,15 +1,15 @@
-import useModalStore from "../../hooks/useModalStore";
-import { Card } from "../layouts/Card";
-import { MobileModalWrapper } from "../layouts/MobileModalWrapper";
-import { ConfirmUnstakeModal } from "./ConfirmUnstakeModal";
+import useModalStore from '../../hooks/useModalStore'
+import { Card } from '../layouts/Card'
+import { MobileModalWrapper } from '../layouts/MobileModalWrapper'
+import { ConfirmUnstakeModal } from './ConfirmUnstakeModal'
 
 type ForceRemoveStakeProps = {
-  nominator: string;
-  nominee: string;
-  isEnabled: boolean;
-  currentRewards: number;
-  currentStake: number;
-};
+  nominator: string
+  nominee: string
+  isEnabled: boolean
+  currentRewards: number
+  currentStake: number
+}
 
 export const ForceRemoveStake = ({
   nominator,
@@ -18,13 +18,11 @@ export const ForceRemoveStake = ({
   currentStake,
   isEnabled,
 }: ForceRemoveStakeProps) => {
-  const { setShowModal, setContent, resetModal } = useModalStore(
-    (state: any) => ({
-      setShowModal: state.setShowModal,
-      setContent: state.setContent,
-      resetModal: state.resetModal,
-    })
-  );
+  const { setShowModal, setContent, resetModal } = useModalStore((state: any) => ({
+    setShowModal: state.setShowModal,
+    setContent: state.setContent,
+    resetModal: state.resetModal,
+  }))
 
   return (
     <div className="flex flex-col">
@@ -33,19 +31,17 @@ export const ForceRemoveStake = ({
           <div className="flex max-md:flex-col justify-between">
             <div className="flex flex-col gap-y-2 w-full">
               <span className="font-semibold">Force Remove Stake</span>
-              <span className="bodyFg text-sm">
-                This action will try to forcefully remove your stake.
-              </span>
+              <span className="bodyFg text-sm">This action will try to forcefully remove your stake.</span>
             </div>
             <div className="flex w-full justify-end max-md:mt-3">
               <button
                 className={
-                  "h-10 border-gray-400 border text-sm px-3 rounded font-semibold " +
-                  (isEnabled ? "text-dangerFg" : "text-gray-400")
+                  'h-10 border-gray-400 border text-sm px-3 rounded font-semibold ' +
+                  (isEnabled ? 'text-dangerFg' : 'text-gray-400')
                 }
                 disabled={!isEnabled}
                 onClick={() => {
-                  resetModal();
+                  resetModal()
                   setContent(
                     <MobileModalWrapper
                       closeButtonRequired={false}
@@ -60,8 +56,8 @@ export const ForceRemoveStake = ({
                         currentStake={currentStake}
                       ></ConfirmUnstakeModal>
                     </MobileModalWrapper>
-                  );
-                  setShowModal(true);
+                  )
+                  setShowModal(true)
                 }}
               >
                 Force Remove Stake
@@ -71,14 +67,11 @@ export const ForceRemoveStake = ({
         </div>
       </Card>
       <div className="flex mt-1 ml-1">
-        <span className="text-xs font-semibold text-dangerFg">
-          Warning: &nbsp;
-        </span>
+        <span className="text-xs font-semibold text-dangerFg">Warning: &nbsp;</span>
         <span className="text-xs font-light bodyBg">
-          This action is not recommended and only to be used in case of absolute
-          emergency.
+          This action is not recommended and only to be used in case of absolute emergency.
         </span>
       </div>
     </div>
-  );
-};
+  )
+}

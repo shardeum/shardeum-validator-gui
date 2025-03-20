@@ -1,153 +1,137 @@
-import { createContext, ReactNode, useState } from "react";
-import {
-  XMarkIcon,
-  InformationCircleIcon,
-  BugAntIcon,
-} from "@heroicons/react/24/outline";
-import { useNodeLogs } from "../hooks/useNodeLogs";
+import { createContext, ReactNode, useState } from 'react'
+import { XMarkIcon, InformationCircleIcon, BugAntIcon } from '@heroicons/react/24/outline'
+import { useNodeLogs } from '../hooks/useNodeLogs'
 
 export const ToastContext = createContext<{
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  message: string;
-  setMessage: (message: string) => void;
-  severity: ToastSeverity;
-  setSeverity: (severity: ToastSeverity) => void;
-  showTemporarySuccessMessage: (message: string) => void;
-  showTemporaryErrorMessage: (message: string) => void;
-  showErrorMessage: (message: string) => void;
-  showErrorDetails: (errorDetails: string) => void;
-  showWarningMessage: (message: string) => void;
-  showTemporaryWarningMessage: (message: string) => void;
+  open: boolean
+  setOpen: (open: boolean) => void
+  message: string
+  setMessage: (message: string) => void
+  severity: ToastSeverity
+  setSeverity: (severity: ToastSeverity) => void
+  showTemporarySuccessMessage: (message: string) => void
+  showTemporaryErrorMessage: (message: string) => void
+  showErrorMessage: (message: string) => void
+  showErrorDetails: (errorDetails: string) => void
+  showWarningMessage: (message: string) => void
+  showTemporaryWarningMessage: (message: string) => void
 }>({
   open: false,
   setOpen: () => false,
-  message: "",
-  setMessage: () => "",
-  severity: "alert-success",
-  setSeverity: () => "alert-success",
+  message: '',
+  setMessage: () => '',
+  severity: 'alert-success',
+  setSeverity: () => 'alert-success',
   showTemporarySuccessMessage: () => {
-    return;
+    return
   },
   showTemporaryErrorMessage: () => {
-    return;
+    return
   },
   showErrorMessage: () => {
-    return;
+    return
   },
   showErrorDetails: () => {
-    return;
+    return
   },
   showWarningMessage: () => {
-    return;
+    return
   },
   showTemporaryWarningMessage: () => {
-    return;
+    return
   },
+})
 
-});
+type ToastSeverity = 'alert-success' | 'alert-error' | 'alert-warning' | 'alert-info'
 
-type ToastSeverity =
-  | "alert-success"
-  | "alert-error"
-  | "alert-warning"
-  | "alert-info";
-
-export default function ToastContextProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [severity, setSeverity] = useState<ToastSeverity>("alert-success");
-  const [detailedMessage, setDetailMessage] = useState<string | null>(null);
-  const [isButtonPressed, setIsButtonPressed] = useState<boolean>(false);
-  const { downloadAllLogs } = useNodeLogs();
+export default function ToastContextProvider({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [severity, setSeverity] = useState<ToastSeverity>('alert-success')
+  const [detailedMessage, setDetailMessage] = useState<string | null>(null)
+  const [isButtonPressed, setIsButtonPressed] = useState<boolean>(false)
+  const { downloadAllLogs } = useNodeLogs()
 
   function handleClose() {
-    setOpen(false);
-    setDetailMessage(null); // Clear the detailedMessage
+    setOpen(false)
+    setDetailMessage(null) // Clear the detailedMessage
   }
 
   function showTemporarySuccessMessage(message: string) {
-    setSeverity("alert-success");
-    setMessage(message);
-    setOpen(true);
-    setTimeout(() => setOpen(false), 6000);
+    setSeverity('alert-success')
+    setMessage(message)
+    setOpen(true)
+    setTimeout(() => setOpen(false), 6000)
   }
 
   // todo: right now we can only display one message at a time. if need arises to queue multiple messages, we can do that
   function showErrorMessage(message: string) {
-    setSeverity("alert-error");
-    setMessage(message);
-    setOpen(true);
+    setSeverity('alert-error')
+    setMessage(message)
+    setOpen(true)
   }
 
   function showWarningMessage(message: string) {
-    setSeverity("alert-warning");
-    setMessage(message);
-    setOpen(true);
+    setSeverity('alert-warning')
+    setMessage(message)
+    setOpen(true)
   }
 
   function showErrorDetails(errorDetails: string) {
-    const detailedMessage = errorDetails;
-    let displayMessage = errorDetails;
+    const detailedMessage = errorDetails
+    let displayMessage = errorDetails
 
     // Check if the errorDetails contains a JSON object
-    if (errorDetails.includes("[ethjs-rpc]")) {
-      const regex = /{\s*"code":/;
-      const match = regex.exec(errorDetails);
+    if (errorDetails.includes('[ethjs-rpc]')) {
+      const regex = /{\s*"code":/
+      const match = regex.exec(errorDetails)
 
       if (match !== null) {
-        console.log(match);
-        const startIndex = match.index;
-        let braceCount = 1;
-        let endIndex = startIndex + match[0].length;
+        console.log(match)
+        const startIndex = match.index
+        let braceCount = 1
+        let endIndex = startIndex + match[0].length
 
         // Iterate over the string to find where the JSON object ends
         for (let i = endIndex; i < errorDetails.length; i++) {
           // eslint-disable-next-line security/detect-object-injection
-          if (errorDetails[i] === "{") {
-            braceCount++;
+          if (errorDetails[i] === '{') {
+            braceCount++
             // eslint-disable-next-line security/detect-object-injection
-          } else if (errorDetails[i] === "}") {
-            braceCount--;
+          } else if (errorDetails[i] === '}') {
+            braceCount--
             if (braceCount === 0) {
               // Found the end of the JSON object
-              endIndex = i;
-              break;
+              endIndex = i
+              break
             }
           }
         }
 
-        const jsonStr = errorDetails.substring(startIndex, endIndex + 1);
+        const jsonStr = errorDetails.substring(startIndex, endIndex + 1)
         try {
-          const jsonObj = JSON.parse(jsonStr);
-          displayMessage =
-            jsonObj.data && jsonObj.data.message ? jsonObj.data.message : null;
+          const jsonObj = JSON.parse(jsonStr)
+          displayMessage = jsonObj.data && jsonObj.data.message ? jsonObj.data.message : null
         } catch (e) {
-          console.error("Error parsing JSON:", e);
-          displayMessage =
-            "Internal JSON-RPC error. Click the info button for more details.";
+          console.error('Error parsing JSON:', e)
+          displayMessage = 'Internal JSON-RPC error. Click the info button for more details.'
         }
       }
     }
-    setSeverity("alert-error");
-    setMessage(displayMessage);
-    setDetailMessage(detailedMessage);
-    setOpen(true);
+    setSeverity('alert-error')
+    setMessage(displayMessage)
+    setDetailMessage(detailedMessage)
+    setOpen(true)
   }
 
   function showTemporaryErrorMessage(message: string) {
-    showErrorMessage(message);
-    setTimeout(() => handleClose(), 6000);
+    showErrorMessage(message)
+    setTimeout(() => handleClose(), 6000)
   }
 
-
   function showTemporaryWarningMessage(message: string) {
-    showWarningMessage(message);
-    setTimeout(() => handleClose(), 6000);
+    showWarningMessage(message)
+    setTimeout(() => handleClose(), 6000)
   }
 
   return (
@@ -165,23 +149,21 @@ export default function ToastContextProvider({
                   <InformationCircleIcon className="h-5 w-5 inline ml-2" />
                 </button>
               )}
-              {severity === "alert-error" && (
+              {severity === 'alert-error' && (
                 <div>
                   <button
                     className="btn-link text-white hover:text-slate-400"
                     disabled={isButtonPressed}
                     onClick={() => {
-                      setIsButtonPressed(true);
+                      setIsButtonPressed(true)
                       downloadAllLogs()
                         .then(() => {
-                          setIsButtonPressed(false);
-                          window.open(
-                            "https://github.com/Shardeum/shardeum-bug-reporting/issues"
-                          );
+                          setIsButtonPressed(false)
+                          window.open('https://github.com/Shardeum/shardeum-bug-reporting/issues')
                         })
                         .catch(() => {
-                          setIsButtonPressed(false);
-                        });
+                          setIsButtonPressed(false)
+                        })
                     }}
                   >
                     <BugAntIcon className="text-sm h-5 inline mr-2" />
@@ -209,11 +191,11 @@ export default function ToastContextProvider({
           showErrorMessage,
           showErrorDetails,
           showWarningMessage,
-          showTemporaryWarningMessage
+          showTemporaryWarningMessage,
         }}
       >
         {children}
       </ToastContext.Provider>
     </>
-  );
+  )
 }

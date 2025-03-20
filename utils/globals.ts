@@ -1,7 +1,7 @@
-import { httpOrHttps } from './is-dev';
+import { httpOrHttps } from './is-dev'
 
 export function useGlobals() {
   return {
-    apiBase: `${httpOrHttps()}://${globalThis.window?.location.host}`
+    apiBase: `${httpOrHttps()}://${globalThis.window?.location.host}`,
   }
 }

@@ -1,19 +1,16 @@
-import useModalStore from "../../hooks/useModalStore";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import useModalStore from '../../hooks/useModalStore'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
 type UnstakeSuccessModalProps = {
-  stake: number;
-  rewards: number;
-};
+  stake: number
+  rewards: number
+}
 
-export const UnstakeSuccessModal = ({
-  stake,
-  rewards,
-}: UnstakeSuccessModalProps) => {
+export const UnstakeSuccessModal = ({ stake, rewards }: UnstakeSuccessModalProps) => {
   const { resetModal } = useModalStore((state: any) => ({
     resetModal: state.resetModal,
-  }));
+  }))
 
   return (
     <div className="bg-white text-subtleFg flex flex-col p-4 max-w-sm w-full rounded">
@@ -22,7 +19,7 @@ export const UnstakeSuccessModal = ({
           <XMarkIcon
             className="h-3 w-3 cursor-pointer"
             onClick={() => {
-              resetModal();
+              resetModal()
             }}
           />
         </div>
@@ -33,18 +30,14 @@ export const UnstakeSuccessModal = ({
         <span className="text-lg font-semibold">Unstake Successful</span>
 
         <span className="text-sm bodyFg text-center">
-          You&apos;ve successfully unstaked{" "}
-          <span className="font-semibold">{(stake + rewards).toFixed(2)}</span>{" "}
-          SHM into your wallet.
+          You&apos;ve successfully unstaked <span className="font-semibold">{(stake + rewards).toFixed(2)}</span> SHM
+          into your wallet.
         </span>
         <hr className="mt-1 w-full" />
-        <button
-          className="w-full bg-primary text-white px-4 py-2 mt-2 rounded"
-          onClick={resetModal}
-        >
+        <button className="w-full bg-primary text-white px-4 py-2 mt-2 rounded" onClick={resetModal}>
           Continue
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,66 +1,67 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { execFile } from 'child_process'
 import { cliStderrResponse, unautorizedResponse } from './handlers/util'
-import * as crypto from '@shardeum-foundation/lib-crypto-utils';
-import rateLimit from 'express-rate-limit';
+import * as crypto from '@shardeum-foundation/lib-crypto-utils'
+import rateLimit from 'express-rate-limit'
 const yaml = require('js-yaml')
 const jwt = require('jsonwebtoken')
-import { doubleCsrfProtection } from './csrf';
+import { doubleCsrfProtection } from './csrf'
 
 function isValidSecret(secret: unknown) {
-  return typeof secret === 'string' && secret.length >= 32;
+  return typeof secret === 'string' && secret.length >= 32
 }
 
 function generateRandomSecret() {
-  return Buffer.from(crypto.randomBytes(32)).toString('hex');
+  return Buffer.from(crypto.randomBytes(32)).toString('hex')
 }
 
-const jwtSecret = (isValidSecret(process.env.JWT_SECRET))
-  ? process.env.JWT_SECRET
-  : generateRandomSecret();
-crypto.init('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347');
+const jwtSecret = isValidSecret(process.env.JWT_SECRET) ? process.env.JWT_SECRET : generateRandomSecret()
+crypto.init('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 
-export const loginHandler = [doubleCsrfProtection, async (req: Request, res: Response) => {
-  const password = req.body && req.body.password
+export const loginHandler = [
+  doubleCsrfProtection,
+  async (req: Request, res: Response) => {
+    const password = req.body && req.body.password
 
-  // Make sure password is defined and is a string
-  if (!password || typeof password !== 'string') {
-    res.status(400).send({ error: 'Invalid password' })
-    return
-  }
-
-  // Exec the CLI validator login command
-  execFile('/usr/local/bin/operator-cli', ['gui', 'login', password], (err, stdout, stderr) => {
-    if (err) {
-      cliStderrResponse(res, 'Unable to check login', err.message)
-      return
-    }
-    if (stderr) {
-      cliStderrResponse(res, 'Unable to check login', stderr)
+    // Make sure password is defined and is a string
+    if (!password || typeof password !== 'string') {
+      res.status(400).send({ error: 'Invalid password' })
       return
     }
 
-    const cliResponse = yaml.load(stdout)
+    // Exec the CLI validator login command
+    execFile('/usr/local/bin/operator-cli', ['gui', 'login', password], (err, stdout, stderr) => {
+      if (err) {
+        cliStderrResponse(res, 'Unable to check login', err.message)
+        return
+      }
+      if (stderr) {
+        cliStderrResponse(res, 'Unable to check login', stderr)
+        return
+      }
 
-    if (cliResponse.login !== 'authorized') {
-      unautorizedResponse(req, res)
-      return
-    }
-    const accessToken = jwt.sign({ nodeId: '' /** add unique node id  */ }, jwtSecret, { expiresIn: '8h' })
+      const cliResponse = yaml.load(stdout)
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
-    res.send({ status: 'ok' })
-  })
-  console.log('executing operator-cli gui login...')
-}]
+      if (cliResponse.login !== 'authorized') {
+        unautorizedResponse(req, res)
+        return
+      }
+      const accessToken = jwt.sign({ nodeId: '' /** add unique node id  */ }, jwtSecret, { expiresIn: '8h' })
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      })
+      res.send({ status: 'ok' })
+    })
+    console.log('executing operator-cli gui login...')
+  },
+]
 
 export const logoutHandler = (req: Request, res: Response) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("csrfToken");
+  res.clearCookie('accessToken')
+  res.clearCookie('csrfToken')
   res.send({ status: 'ok' })
 }
 
@@ -68,20 +69,18 @@ export const apiLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 1500, // Limit each IP to 1500 requests per windowMs
   message: 'Too many requests from this IP, please try again after 10 minutes',
-});
-
+})
 
 export const loginAttemptLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 20, // Limit each IP to 20 requests per windowMs
   message: 'Too many login attempts from this IP, please try again after 10 minutes',
-});
+})
 
 export const httpBodyLimiter = express.json({ limit: '100kb' })
 
-
 export const jwtMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.accessToken;
+  const token = req.cookies.accessToken
 
   if (!token) {
     unautorizedResponse(req, res)
@@ -89,7 +88,8 @@ export const jwtMiddleware = (req: Request, res: Response, next: NextFunction) =
   }
 
   jwt.verify(token, jwtSecret, (err: any, jwtData: any) => {
-    if (err) {// invalid token
+    if (err) {
+      // invalid token
       unautorizedResponse(req, res)
       return
     }
@@ -101,6 +101,6 @@ export const jwtMiddleware = (req: Request, res: Response, next: NextFunction) =
 export const checkAuthHandler = [
   jwtMiddleware,
   (req: Request, res: Response) => {
-    res.json({ authenticated: true });
-  }
-];
+    res.json({ authenticated: true })
+  },
+]

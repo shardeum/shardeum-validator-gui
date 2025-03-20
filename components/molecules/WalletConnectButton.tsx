@@ -1,44 +1,30 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 type WalletConnectButtonProps = {
-  label: string;
-  toShowAddress?: boolean;
-  onConnect?: boolean;
-};
+  label: string
+  toShowAddress?: boolean
+  onConnect?: boolean
+}
 
-export const WalletConnectButton = ({
-  label,
-  toShowAddress = false,
-}: WalletConnectButtonProps) => {
-  const buttonClassName = "w-full px-3 py-2 text-sm max-w-md border rounded-md";
+export const WalletConnectButton = ({ label, toShowAddress = false }: WalletConnectButtonProps) => {
+  const buttonClassName = 'w-full px-3 py-2 text-sm max-w-md border rounded-md'
   return (
     <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openConnectModal,
-        openChainModal,
-        authenticationStatus,
-        mounted,
-      }) => {
+      {({ account, chain, openAccountModal, openConnectModal, openChainModal, authenticationStatus, mounted }) => {
         // Note: If your app doesn't use authentication, you
         // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== "loading";
+        const ready = mounted && authenticationStatus !== 'loading'
         const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus || authenticationStatus === "authenticated");
+          ready && account && chain && (!authenticationStatus || authenticationStatus === 'authenticated')
         return (
           <div
             {...(!ready && {
-              "aria-hidden": true,
+              'aria-hidden': true,
               style: {
                 opacity: 0,
-                pointerEvents: "none",
-                userSelect: "none",
+                pointerEvents: 'none',
+                userSelect: 'none',
               },
             })}
           >
@@ -48,11 +34,11 @@ export const WalletConnectButton = ({
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className={"bg-primary text-white " + buttonClassName}
+                    className={'bg-primary text-white ' + buttonClassName}
                   >
-                    {label || "Connect Wallet"}
+                    {label || 'Connect Wallet'}
                   </button>
-                );
+                )
               }
 
               if (chain.unsupported) {
@@ -60,25 +46,17 @@ export const WalletConnectButton = ({
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className={
-                      "text-green-700 font-medium bg-white" + buttonClassName
-                    }
+                    className={'text-green-700 font-medium bg-white' + buttonClassName}
                   >
                     Switch network
                   </button>
-                );
+                )
               }
 
               return (
                 <>
                   {!toShowAddress && (
-                    <button
-                      disabled={true}
-                      type="button"
-                      className={
-                        "text-green-700 font-medium " + buttonClassName
-                      }
-                    >
+                    <button disabled={true} type="button" className={'text-green-700 font-medium ' + buttonClassName}>
                       Wallet Connected
                     </button>
                   )}
@@ -88,22 +66,17 @@ export const WalletConnectButton = ({
                       onClick={openAccountModal}
                     >
                       <span className="h-4 w-4">
-                        <Jazzicon
-                          diameter={20}
-                          seed={jsNumberForAddress(account.address)}
-                        />
+                        <Jazzicon diameter={20} seed={jsNumberForAddress(account.address)} />
                       </span>
-                      <span className="font-semibold text-sm">
-                        {account.displayName}
-                      </span>
+                      <span className="font-semibold text-sm">{account.displayName}</span>
                     </button>
                   )}
                 </>
-              );
+              )
             })()}
           </div>
-        );
+        )
       }}
     </ConnectButton.Custom>
-  );
-};
+  )
+}

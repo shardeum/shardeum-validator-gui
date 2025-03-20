@@ -3,14 +3,14 @@ import * as express from 'express'
 import configureNodeHandlers from './handlers/node'
 import fs from 'fs'
 import path from 'path'
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'
 import asyncRouteHandler from './handlers/async-router-handler'
-import { fetchWithTimeout } from "./handlers/util";
+import { fetchWithTimeout } from './handlers/util'
 const yaml = require('js-yaml')
-import { doubleCsrfProtection } from './csrf';
-import { checkAuthHandler } from './auth';
+import { doubleCsrfProtection } from './csrf'
+import { checkAuthHandler } from './auth'
 
-const ACCOUNT_INFO_URL = process.env.ACCOUNT_INFO_URL ?? "https://explorer-atomium.shardeum.org/api/account";
+const ACCOUNT_INFO_URL = process.env.ACCOUNT_INFO_URL ?? 'https://explorer-atomium.shardeum.org/api/account'
 // const FAUCET_CLAIM_URL =
 //   process.env.FAUCET_CLAIM_URL ?? "https://api.shardeum.org/api/transfer";
 
@@ -34,19 +34,16 @@ configureNodeHandlers(apiRouter)
 apiRouter.get('/node/status/history', async (req, res) => {
   try {
     console.log('fetching node history')
-    const { address: accountAddress } = req.query;
+    const { address: accountAddress } = req.query
 
-    const accInfoResponse = await fetchWithTimeout(
-      `${ACCOUNT_INFO_URL}?address=${accountAddress}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await accInfoResponse.json();
+    const accInfoResponse = await fetchWithTimeout(`${ACCOUNT_INFO_URL}?address=${accountAddress}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = await accInfoResponse.json()
     res.status(200).json(data?.accounts?.[0]?.account?.operatorAccountInfo?.operatorStats || {})
   } catch (e) {
     if (e instanceof Error) {
@@ -74,7 +71,7 @@ apiRouter.get('/node/performance', (req, res) => {
 
 apiRouter.post('/log/stake', doubleCsrfProtection, (req, res) => {
   console.log('Writing Stake TX logs')
-  fs.appendFile(path.join(__dirname, '../stakeTXs.log'), JSON.stringify(req.body, undefined, 3), err => {
+  fs.appendFile(path.join(__dirname, '../stakeTXs.log'), JSON.stringify(req.body, undefined, 3), (err) => {
     if (err) {
       console.log(err)
       res.status(500).json({
@@ -88,7 +85,7 @@ apiRouter.post('/log/stake', doubleCsrfProtection, (req, res) => {
 
 apiRouter.post('/log/unstake', doubleCsrfProtection, (req, res) => {
   console.log('Writing Unstake TX logs')
-  fs.appendFile(path.join(__dirname, '../unstakeTXs.log'), JSON.stringify(req.body, undefined, 3), err => {
+  fs.appendFile(path.join(__dirname, '../unstakeTXs.log'), JSON.stringify(req.body, undefined, 3), (err) => {
     if (err) {
       console.log(err)
       res.status(500).json({
@@ -100,7 +97,7 @@ apiRouter.post('/log/unstake', doubleCsrfProtection, (req, res) => {
   res.status(200).json({ status: 'ok' })
 })
 
-apiRouter.get('/auth/check', checkAuthHandler);
+apiRouter.get('/auth/check', checkAuthHandler)
 
 // apiRouter.post(
 //   '/claim-tokens',
