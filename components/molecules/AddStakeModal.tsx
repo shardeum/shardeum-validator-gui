@@ -7,6 +7,8 @@ import { useStake } from '../../hooks/useStake'
 import useModalStore from '../../hooks/useModalStore'
 import useToastStore, { ToastSeverity } from '../../hooks/useToastStore'
 import { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
+import { CHAIN_ID } from '../../pages/_app'
+import { ethers } from 'ethers'
 
 export const AddStakeModal = () => {
   const { resetModal } = useModalStore((state: any) => ({
@@ -20,13 +22,18 @@ export const AddStakeModal = () => {
   const stakeInputId = 'stakeInput'
 
   const { address } = useAccount()
-  const { data } = useBalance({ address })
+  const { data } = useBalance({
+    address,
+    chainId: CHAIN_ID,
+    formatUnits: 'ether',
+  })
   const { nodeStatus } = useNodeStatus()
   const stakeInputRef = useRef<HTMLInputElement>(null)
   const [stakedAmount, setStakedAmount] = useState(0)
   const minimumStakeRequirement = useMemo(() => {
     return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
+  const [balanceData, setBalanceData] = useState<{ formatted: string; symbol: string } | null>(null)
 
   const { sendTransaction, handleStakeChange, setNomineeAddress, isEmpty, isLoading } = useStake({
     nominator: address?.toString() || '',
@@ -76,6 +83,33 @@ export const AddStakeModal = () => {
       })
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const fetchCustomBalance = async () => {
+      if (address && window.ethereum) {
+        try {
+          // Use wallet provider to get balance from the active network
+          const provider = new ethers.providers.Web3Provider(window.ethereum)
+          const balance = await provider.getBalance(address)
+          setBalanceData({
+            formatted: ethers.utils.formatEther(balance),
+            symbol: 'SHM',
+          })
+        } catch (error) {
+          console.error('Error fetching balance:', error)
+          // Fall back to wagmi balance if custom fetch fails
+          if (data) {
+            setBalanceData({
+              formatted: data.formatted,
+              symbol: data.symbol,
+            })
+          }
+        }
+      }
+    }
+
+    fetchCustomBalance()
+  }, [address, data])
 
   return (
     <>
@@ -128,10 +162,12 @@ export const AddStakeModal = () => {
                 <span>Minimum stake requirement: </span>
                 <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
               </div>
-              {data?.formatted && (
+              {(balanceData || data) && (
                 <div className="text-xs">
                   <span>Balance: </span>
-                  <span className="font-semibold">{`${data?.formatted} ${data?.symbol}`}</span>
+                  <span className="font-semibold">{`${balanceData?.formatted || data?.formatted} ${
+                    balanceData?.symbol || data?.symbol
+                  }`}</span>
                 </div>
               )}
             </div>
