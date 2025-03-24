@@ -7,6 +7,8 @@ import { useStake } from '../../hooks/useStake'
 import useModalStore from '../../hooks/useModalStore'
 import useToastStore, { ToastSeverity } from '../../hooks/useToastStore'
 import { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
+import { CHAIN_ID } from '../../pages/_app'
+import { useWalletBalance } from '../../hooks/useWalletBalance'
 
 export const AddStakeModal = () => {
   const { resetModal } = useModalStore((state: any) => ({
@@ -20,13 +22,20 @@ export const AddStakeModal = () => {
   const stakeInputId = 'stakeInput'
 
   const { address } = useAccount()
-  const { data } = useBalance({ address })
+  const { data } = useBalance({
+    address,
+    chainId: CHAIN_ID,
+    formatUnits: 'ether',
+  })
   const { nodeStatus } = useNodeStatus()
   const stakeInputRef = useRef<HTMLInputElement>(null)
   const [stakedAmount, setStakedAmount] = useState(0)
   const minimumStakeRequirement = useMemo(() => {
     return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
+
+  // Use wallet balance hook for fetching balance
+  const { balanceData } = useWalletBalance(address, data)
 
   const { sendTransaction, handleStakeChange, setNomineeAddress, isEmpty, isLoading } = useStake({
     nominator: address?.toString() || '',
@@ -128,10 +137,12 @@ export const AddStakeModal = () => {
                 <span>Minimum stake requirement: </span>
                 <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
               </div>
-              {data?.formatted && (
+              {(balanceData || data) && (
                 <div className="text-xs">
                   <span>Balance: </span>
-                  <span className="font-semibold">{`${data?.formatted} ${data?.symbol}`}</span>
+                  <span className="font-semibold">{`${balanceData?.formatted || data?.formatted} ${
+                    balanceData?.symbol || data?.symbol
+                  }`}</span>
                 </div>
               )}
             </div>
