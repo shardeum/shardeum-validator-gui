@@ -75,7 +75,10 @@ export const useStake = ({ nominator, nominee, stakeAmount, onStake, totalStaked
       console.log(stakeAmount, totalStaked);
       const value = ethers.BigNumber.from(data.stake);
 
-      const totalStakeBigNumber = ethers.BigNumber.from(totalStaked);
+      const totalStakeBigNumber = ethers.utils.parseUnits(
+        totalStaked.toString(),
+        "ether"
+      )
       const stakeAmountBigNumber = ethers.utils.parseUnits(
         stakeAmount,
         "ether"

@@ -82,8 +82,8 @@ export default function StakeForm({
       console.log("BLOB: ", blobData);
       console.log(stakeAmount,totalStaked);
       const value = ethers.BigNumber.from(data.stake);
-   
-      const totalStakeBigNumber = ethers.BigNumber.from(totalStaked);
+
+      const totalStakeBigNumber = ethers.utils.parseUnits(totalStaked.toString(), "ether")
       const stakeAmountBigNumber = ethers.utils.parseUnits(stakeAmount, "ether")
       
       console.log(totalStakeBigNumber, stakeAmountBigNumber)
