@@ -8,7 +8,7 @@ import useModalStore from '../../hooks/useModalStore'
 import useToastStore, { ToastSeverity } from '../../hooks/useToastStore'
 import { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
 import { CHAIN_ID } from '../../pages/_app'
-import { ethers } from 'ethers'
+import { useWalletBalance } from '../../hooks/useWalletBalance'
 
 export const AddStakeModal = () => {
   const { resetModal } = useModalStore((state: any) => ({
@@ -33,7 +33,9 @@ export const AddStakeModal = () => {
   const minimumStakeRequirement = useMemo(() => {
     return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
-  const [balanceData, setBalanceData] = useState<{ formatted: string; symbol: string } | null>(null)
+
+  // Use wallet balance hook for fetching balance
+  const { balanceData } = useWalletBalance(address, data)
 
   const { sendTransaction, handleStakeChange, setNomineeAddress, isEmpty, isLoading } = useStake({
     nominator: address?.toString() || '',
@@ -83,33 +85,6 @@ export const AddStakeModal = () => {
       })
     }
   }, [isLoading])
-
-  useEffect(() => {
-    const fetchCustomBalance = async () => {
-      if (address && window.ethereum) {
-        try {
-          // Use wallet provider to get balance from the active network
-          const provider = new ethers.providers.Web3Provider(window.ethereum)
-          const balance = await provider.getBalance(address)
-          setBalanceData({
-            formatted: ethers.utils.formatEther(balance),
-            symbol: 'SHM',
-          })
-        } catch (error) {
-          console.error('Error fetching balance:', error)
-          // Fall back to wagmi balance if custom fetch fails
-          if (data) {
-            setBalanceData({
-              formatted: data.formatted,
-              symbol: data.symbol,
-            })
-          }
-        }
-      }
-    }
-
-    fetchCustomBalance()
-  }, [address, data])
 
   return (
     <>
