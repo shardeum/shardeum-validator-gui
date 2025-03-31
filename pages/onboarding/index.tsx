@@ -225,7 +225,7 @@ const Onboarding = () => {
                     </div>
                     <div className="flex flex-col w-full pl-7">
                       <span className="font-light text-sm text-gray-600">
-                        Connect your wallet and switch to Shardeum Atomium Network.
+                        Connect your wallet and switch to Shardeum Network.
                       </span>
                       <div className="flex flex-col mt-4 pr-5">
                         <div className="flex">
