@@ -1,10 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import { useTXLogs } from './useTXLogs'
-import { isMetaMaskError } from '../utils/isMetaMaskError'
-import { isEthersError } from '../utils/isEthersError'
 import { ExternalProvider } from '@ethersproject/providers'
-import { Constants } from '../utils/constants'
 
 type useStakeProps = {
   nominator: string
@@ -88,7 +85,6 @@ export const useStake = ({ nominator, nominee, stakeAmount, onStake, totalStaked
       console.log('Params: ', params)
 
       const { hash, data: resultData, wait } = await signer.sendTransaction(params)
-      localStorage.setItem(Constants.UNSTAKE_COOLDOWN_KEY, Date.now().toString())
       console.log('TX RECEIPT: ', { hash, resultData })
       await writeStakeLog(createStakeLog(blobData, params, hash, from))
 

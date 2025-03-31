@@ -7,6 +7,7 @@ import { isEthersError } from '../utils/isEthersError'
 import { ExternalProvider } from '@ethersproject/providers'
 import { Address } from 'wagmi'
 import { showErrorMessage, showSuccessMessage } from './useToastStore'
+import { Constants } from '../utils/constants'
 
 type useStakeProps = {
   nominator: string
@@ -62,6 +63,7 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
       console.log('Params: ', params)
 
       const { hash, data, wait } = await signer.sendTransaction(params)
+      localStorage.setItem(Constants.UNSTAKE_COOLDOWN_KEY, Date.now().toString())
       console.log('TX RECEIPT: ', { hash, data })
       await writeUnstakeLog(createUnstakeLog(unstakeData, params, hash, from))
 
