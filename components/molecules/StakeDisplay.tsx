@@ -11,6 +11,7 @@ import { ClipboardIcon } from '../atoms/ClipboardIcon'
 import { MobileModalWrapper } from '../layouts/MobileModalWrapper'
 import { useAccountStakeInfo } from '../../hooks/useAccountStakeInfo'
 import { Constants } from '../../utils/constants'
+import { useLocalStorage } from '../../hooks/useLocalStorage'
 
 export const StakeDisplay = () => {
   const addressRef = useRef<HTMLSpanElement>(null)
@@ -24,6 +25,7 @@ export const StakeDisplay = () => {
     resetModal: state.resetModal,
   }))
   const [hasNodeStopped, setHasNodeStopped] = useState(false)
+  const [lastUnstake] = useLocalStorage(Constants.UNSTAKE_COOLDOWN_KEY, '0')
 
   useEffect(() => {
     if (nodeStatus?.state === 'stopped') {
@@ -32,17 +34,6 @@ export const StakeDisplay = () => {
       setHasNodeStopped(false)
     }
   }, [nodeStatus?.state])
-
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === Constants.UNSTAKE_COOLDOWN_KEY) {
-        setLastUnstake(e.newValue ? parseInt(e.newValue) : 0)
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
-  }, [])
 
   const formatRemainingTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000)
@@ -56,11 +47,6 @@ export const StakeDisplay = () => {
   }
 
   const stakeForConnectedAddressOrNode = parseFloat(stakeInfo?.stake?.trim() || nodeStatus?.lockedStake || '0')
-  const [lastUnstake, setLastUnstake] = useState(
-    localStorage.getItem(Constants.UNSTAKE_COOLDOWN_KEY)
-      ? parseInt(localStorage.getItem(Constants.UNSTAKE_COOLDOWN_KEY)!)
-      : 0
-  )
   const hasStakeOnDifferentNode =
     parseFloat(stakeInfo?.stake ?? '0.0') > parseFloat('0.0') &&
     nodeStatus?.nomineeAddress != null &&
@@ -71,7 +57,7 @@ export const StakeDisplay = () => {
     if (!stakeInfo || stakeInfo?.unstakeInterval == null || stakeInfo?.unstakeInterval <= 0) {
       return 0
     }
-    const lastUnstakeTime = lastUnstake ? lastUnstake : 0
+    const lastUnstakeTime = lastUnstake ? parseInt(lastUnstake) : 0
     const cooldown = stakeInfo.unstakeInterval - (Date.now() - lastUnstakeTime)
     return cooldown > 0 ? cooldown : 0
   }
