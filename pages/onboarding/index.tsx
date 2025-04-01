@@ -56,7 +56,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'claim-tokens',
     title: 'Claim testnet tokens from faucet',
     description: 'Claim SHM tokens from Shardeum faucet as a reward.',
-    isEnabled: process.env.ENABLE_FAUCET === 'true',
+    isEnabled: true,
     component: ClaimTokensStep,
     order: 2,
     excludedChain: [MAINNET_CHAIN_ID, STAGENET_CHAIN_ID],
