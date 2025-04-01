@@ -11,13 +11,16 @@ import { fetchBalance } from '@wagmi/core'
 import { CHAIN_ID } from '../_app'
 import { useDevice } from '../../context/device'
 import { useRouter } from 'next/router'
-import { WalletConnectButton } from '../../components/molecules/WalletConnectButton'
 import { GeistSans } from 'geist/font'
 import Link from 'next/link'
 import { useStake } from '../../hooks/useStake'
 import { ToastWindow } from '../../components/molecules/ToastWindow'
 import useToastStore, { ToastSeverity } from '../../hooks/useToastStore'
 import { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
+import { WalletConnectStep } from '../../components/onboarding/WalletConnectStep'
+import { ClaimTokensStep } from '../../components/onboarding/ClaimTokensStep'
+import { StakeStep } from '../../components/onboarding/StakeStep'
+import { StartNodeStep } from '../../components/onboarding/StartNodeStep'
 
 const tokensClaimedByKey = 'tokensClaimedBy'
 export const onboardingCompletedKey = 'onboardingCompleted'
@@ -25,6 +28,58 @@ export const onboardingCompletedKey = 'onboardingCompleted'
 export const VALIDATOR_GUI_FAQS_URL = process.env.VALIDATOR_GUI_FAQS_URL || 'https://shardeum.org/faq/general'
 export const VALIDATOR_GUI_DOCS_URL = process.env.VALIDATOR_GUI_DOCS_URL || 'https://docs.shardeum.org'
 export const FAUCET_CLAIM_DOCS_URL = process.env.FAUCET_CLAIM_DOCS_URL || 'https://docs.shardeum.org/docs/faucet/claim'
+
+type OnboardingStep = {
+  id: string
+  title: string
+  description: string
+  isEnabled: boolean
+  component: React.ComponentType<any>
+  order: number
+  excludedChain?: number[]
+}
+
+const MAINNET_CHAIN_ID = 8118
+const STAGENET_CHAIN_ID = 8081
+
+const ONBOARDING_STEPS: OnboardingStep[] = [
+  {
+    id: 'connect-wallet',
+    title: 'Connect your wallet',
+    description: 'Connect your wallet and switch to Shardeum Network.',
+    isEnabled: true,
+    component: WalletConnectStep,
+    order: 1,
+    excludedChain: [],
+  },
+  {
+    id: 'claim-tokens',
+    title: 'Claim testnet tokens from faucet',
+    description: 'Claim SHM tokens from Shardeum faucet as a reward.',
+    isEnabled: process.env.ENABLE_FAUCET === 'true',
+    component: ClaimTokensStep,
+    order: 2,
+    excludedChain: [MAINNET_CHAIN_ID, STAGENET_CHAIN_ID],
+  },
+  {
+    id: 'start-node',
+    title: 'Start your node',
+    description: 'Start your node to be a part of the validation network.',
+    isEnabled: true,
+    component: StartNodeStep,
+    order: 3,
+    excludedChain: [],
+  },
+  {
+    id: 'stake',
+    title: 'Stake your SHM',
+    description: 'Stake SHM to become a validator & earn rewards.',
+    isEnabled: true,
+    component: StakeStep,
+    order: 4,
+    excludedChain: [],
+  },
+]
 
 const Onboarding = () => {
   const [isNodeStarted, setIsNodeStarted] = useState(false)
@@ -34,11 +89,11 @@ const Onboarding = () => {
   const { isConnected, address } = useAccount({
     onConnect: async (args) => {
       if (args?.address) {
-        const balance = await fetchBalance({
-          address: args?.address,
-          chainId: CHAIN_ID,
-        })
-        setAccountBalance(`${balance?.formatted} ${balance?.symbol}`)
+        // const balance = await fetchBalance({
+        //   address: args?.address,
+        //   chainId: CHAIN_ID,
+        // })
+        // setAccountBalance(`${balance?.formatted} ${balance?.symbol}`)
       }
     },
     onDisconnect: () => {
@@ -104,12 +159,6 @@ const Onboarding = () => {
   }, [nodeStatus?.nomineeAddress, setNomineeAddress])
 
   useEffect(() => {
-    if (isMobile) {
-      router.push('/dashboard')
-    }
-  }, [isMobile])
-
-  useEffect(() => {
     if (isStakingComplete) {
       localStorage.setItem(onboardingCompletedKey, 'true')
       setCurrentToast({
@@ -141,6 +190,12 @@ const Onboarding = () => {
     }
   }, [isStaking])
 
+  const filteredSteps = useMemo(() => {
+    return ONBOARDING_STEPS.filter((step) => step.isEnabled && !step.excludedChain?.includes(chainId)).sort(
+      (a, b) => a.order - b.order
+    )
+  }, [chainId])
+
   return (
     <div
       className={'h-full w-full flex justify-between text-black fill-bg py-24 ' + GeistSans.className}
@@ -156,18 +211,12 @@ const Onboarding = () => {
               <div className="max-w-sm">
                 <span className="font-semibold text-3xl w-full">Welcome to Shardeum Validator Setup</span>
                 <div className="flex flex-col gap-y-3 mt-6">
-                  <div className="flex gap-x-1 items-center">
-                    <CheckCircleIcon className="h-5 w-5" />
-                    <span className="text-sm">Connect to the Shardeum network step-by-step.</span>
-                  </div>
-                  <div className="flex gap-x-1 items-center">
-                    <CheckCircleIcon className="h-5 w-5" />
-                    <span className="text-sm">Get SHM tokens for staking.</span>
-                  </div>
-                  <div className="flex gap-x-1 items-center">
-                    <CheckCircleIcon className="h-5 w-5" />
-                    <span className="text-sm">Run a validator node by the end!</span>
-                  </div>
+                  {filteredSteps.map((step, index) => (
+                    <div key={step.id} className="flex gap-x-1 items-center">
+                      <CheckCircleIcon className="h-5 w-5" />
+                      <span className="text-sm">{step.description}</span>
+                    </div>
+                  ))}
                 </div>
                 <hr className="h-1 rounded w-full max-w-sm my-3" />
                 <span>Estimated Setup time Under 5 Minutes</span>
@@ -210,358 +259,10 @@ const Onboarding = () => {
               />
             </div>
             <div className="w-full max-w-xl flex flex-col items-start gap-y-3">
-              {/* Step 1: Connect wallet */}
-              <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-                {!(isConnected && chainId === CHAIN_ID) && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
-                        1
-                      </span>
-
-                      <span className="font-semibold w-full flex items-center justify-between pr-5">
-                        Connect your wallet
-                      </span>
-                    </div>
-                    <div className="flex flex-col w-full pl-7">
-                      <span className="font-light text-sm text-gray-600">
-                        Connect your wallet and switch to Shardeum Network.
-                      </span>
-                      <div className="flex flex-col mt-4 pr-5">
-                        <div className="flex">
-                          <div className="basis-0 grow text-white">
-                            <WalletConnectButton label="Connect Wallet"></WalletConnectButton>
-                          </div>
-                          {isConnected && chainId !== CHAIN_ID && (
-                            <div className="basis-0 grow">
-                              <button
-                                className={
-                                  'ml-2 px-3 py-2 text-white text-sm rounded w-full ' +
-                                  (isConnected ? 'bg-primary' : 'bg-gray-400')
-                                }
-                                disabled={!isConnected}
-                                onClick={() => switchNetwork?.(CHAIN_ID)}
-                              >
-                                2. Switch to Shardeum Atomium
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                        {isConnected && chainId !== CHAIN_ID && (
-                          <div className="w-full flex text-xs justify-end mt-1 gap-x-1">
-                            <span>Wrong wallet? </span>
-                            <button
-                              className="text-primary"
-                              type="button"
-                              onClick={() => {
-                                console.log('Disconnecting', disconnect)
-                                if (disconnect) {
-                                  disconnect()
-                                }
-                              }}
-                            >
-                              Disconnect
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isConnected && chainId === CHAIN_ID && (
-                  <>
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />
-                      <span className="font-semibold flex justify-between items-center w-full pr-5">
-                        Successfully connected to the Shardeum Network
-                      </span>
-                    </div>
-                    <span className="text-gray-600 text-sm ml-8">
-                      {address &&
-                        `${address.slice(0, 4)}...
-                      ${address.slice(address.length - 5)} connected to the
-                      network`}
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {/* Step 2: Claim tokens */}
-              <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-                {isConnected && chainId === CHAIN_ID && tokenClaimPhase < 2 && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
-                        2
-                      </span>
-                      <span className="font-semibold w-full flex items-center justify-between pr-5">
-                        Claim testnet tokens from faucet
-                      </span>
-                    </div>
-                    <div className="flex flex-col w-full pl-7">
-                      <span className="text-gray-600 text-sm">Claim SHM tokens from Shardeum faucet as a reward.</span>
-                      <div className="flex flex-col mt-4 pr-5">
-                        {tokenClaimPhase === 0 && (
-                          <div className="flex">
-                            <div className="basis-0 grow">
-                              <button
-                                className={
-                                  'px-3 py-2 text-white text-sm font-semibold rounded w-full ' +
-                                  (isConnected ? 'bg-primary' : 'bg-gray-400')
-                                }
-                                disabled={!isConnected}
-                                onClick={() => {
-                                  if (window) {
-                                    window.open(FAUCET_CLAIM_DOCS_URL, '_blank')
-                                  }
-                                  setTokenClaimPhase(2)
-                                }}
-                              >
-                                Claim SHM
-                              </button>
-                            </div>
-                            <div className="basis-0 grow ml-2">
-                              <button
-                                className={
-                                  'ml-2 px-3 py-2 text-primary text-sm font-semibold rounded w-full bg-white border border-gray-300'
-                                }
-                                disabled={!isConnected}
-                                onClick={() => {
-                                  localStorage.setItem(tokensClaimedByKey, address || '')
-                                  setTokenClaimPhase(2)
-                                }}
-                              >
-                                I already have SHM to stake
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                        {tokenClaimPhase === 1 && (
-                          <button
-                            className="mt-2 border border-gray-300 rounded w-full px-4 py-2 flex items-center justify-center text-sm font-medium"
-                            disabled={true}
-                          >
-                            <div className="spinner flex items-center justify-center mr-3">
-                              <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-                            </div>{' '}
-                            Claiming SHM
-                          </button>
-                        )}
-                        {accountBalance !== '' && (
-                          <div className="w-full flex text-xs justify-end mt-1 gap-x-1">
-                            <span>Balance: </span>
-                            <span className="font-semibold">{accountBalance}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isConnected && chainId === CHAIN_ID && tokenClaimPhase === 2 && (
-                  <>
-                    <div className="flex items-center gap-x-2">
-                      <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />
-                      <span className="font-semibold flex justify-between items-center w-full pr-5">
-                        Successfully claimed SHM
-                      </span>
-                    </div>
-                    <span className="text-gray-600 text-sm ml-8">
-                      You&apos;ve successfully claimed your reward SHM tokens.
-                    </span>
-                  </>
-                )}
-                {!(isConnected && chainId === CHAIN_ID) && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2">
-                      <span className="flex items-center justify-center bg-gray-400 h-5 w-5 rounded-full text-white text-sm">
-                        2
-                      </span>
-
-                      <span className="font-medium text-gray-400">Claim testnet tokens from faucet</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 3: Start node */}
-              <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-                {tokenClaimPhase === 2 && !isNodeStarted && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
-                        3
-                      </span>
-
-                      <span className="font-semibold w-full flex items-center justify-between pr-5">
-                        Start your node
-                      </span>
-                    </div>
-                    <div className="flex flex-col w-full pl-7">
-                      <span className="font-light text-sm text-gray-600">
-                        Start your node to be a part of the validation network.
-                      </span>
-                      <div className="flex flex-col mt-4 pr-5">
-                        <div className="flex">
-                          {!isLoading && (
-                            <button
-                              className="w-full bg-primary text-white text-sm px-4 py-2 rounded-sm mb-1"
-                              onClick={async () => {
-                                await startNode()
-                                setIsNodeStarted(true)
-                              }}
-                            >
-                              Start Node
-                            </button>
-                          )}
-                          {isLoading && (
-                            <button
-                              className="border border-gray-300 rounded w-full px-4 py-2 flex items-center justify-center text-sm font-medium"
-                              disabled={true}
-                            >
-                              <div className="spinner flex items-center justify-center mr-3">
-                                <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-                              </div>{' '}
-                              Starting Node
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {tokenClaimPhase === 2 && isNodeStarted && (
-                  <>
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />
-                      <span className="font-semibold flex justify-between items-center w-full pr-5">
-                        Node initiated successfully.
-                      </span>
-                    </div>
-                    <span className="text-gray-600 text-sm ml-8">
-                      Your node has been started and is waiting for stake
-                    </span>
-                  </>
-                )}
-                {tokenClaimPhase < 2 && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2">
-                      <span className="flex items-center justify-center bg-gray-400 h-5 w-5 rounded-full text-white text-xs">
-                        3
-                      </span>
-
-                      <span className="font-medium text-gray-400">Start your node</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 4: Stake SHM */}
-              <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-                {(!isConnected || tokenClaimPhase < 2 || !isNodeStarted) && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2">
-                      <span className="flex items-center justify-center bg-gray-400 h-5 w-5 rounded-full text-white text-xs">
-                        4
-                      </span>
-
-                      <span className="font-medium text-gray-400">Stake your SHM</span>
-                    </div>
-                  </div>
-                )}
-                {isConnected && tokenClaimPhase === 2 && isNodeStarted && !isStakingComplete && (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
-                        4
-                      </span>
-
-                      <span className="font-semibold w-full flex items-center justify-between pr-5">
-                        Stake your SHM
-                      </span>
-                    </div>
-                    <div className="flex flex-col w-full pl-7">
-                      <span className="font-light text-sm text-gray-600">
-                        Stake SHM to become a validator & earn rewards.
-                      </span>
-                      <div className="flex flex-col mt-4 pr-5">
-                        <div className="flex justify-between gap-x-2 bg-white">
-                          <input
-                            className="basis-0 grow bg-white border border-gray-300 shadow-sm rounded px-3 py-1"
-                            placeholder="10"
-                            type="number"
-                            step="0.00000000000000000001"
-                            min={minimumStakeRequirement}
-                            disabled={isStaking}
-                            onChange={(e) => {
-                              const amount = e.target.value
-                              if (amount) {
-                                setStakedAmount(parseFloat(e.target.value))
-                              }
-                              handleStakeChange(e)
-                            }}
-                          ></input>
-                          {!isStaking && (
-                            <button
-                              onClick={async () => {
-                                await sendTransaction()
-                              }}
-                              disabled={isEmpty || stakedAmount < minimumStakeRequirement}
-                              className={
-                                (isEmpty || stakedAmount < minimumStakeRequirement
-                                  ? 'bg-gray-300'
-                                  : 'bg-indigo-600 hover:bg-indigo-700') +
-                                ' text-white text-sm font-semibold w-32 py-2 rounded flex justify-center ease-in-out duration-300 ' +
-                                GeistSans.className
-                              }
-                            >
-                              Stake
-                            </button>
-                          )}
-                          {isStaking && (
-                            <button
-                              className="border border-gray-300 rounded w-32 py-2 flex items-center justify-center text-sm font-medium"
-                              disabled={true}
-                            >
-                              <div className="spinner flex items-center justify-center mr-3">
-                                <div className="border-2 border-black border-b-white rounded-full h-3.5 w-3.5"></div>
-                              </div>{' '}
-                              Confirming
-                            </button>
-                          )}
-                        </div>
-                        <div className="flex flex-col w-full mt-2">
-                          <div className="flex items-center"></div>
-                          <div className="flex justify-between">
-                            <div className={`text-xs ${stakedAmount < minimumStakeRequirement ? 'text-dangerFg' : ''}`}>
-                              <span>Minimum stake requirement: </span>
-                              <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
-                            </div>
-                            {accountBalance !== '' && (
-                              <div className="text-xs">
-                                <span>Balance: </span>
-                                <span className="font-semibold">{accountBalance}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isConnected && tokenClaimPhase === 2 && isNodeStarted && isStakingComplete && (
-                  <>
-                    <div className="flex items-center gap-x-2 max-w-xl">
-                      <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />
-                      <span className="font-semibold flex justify-between items-center w-full pr-5">
-                        Successfully staked SHM
-                      </span>
-                    </div>
-                    <span className="text-gray-600 text-sm ml-8">
-                      You&apos;ve successfully staked {stakedAmount} SHM.
-                    </span>
-                  </>
-                )}
-              </div>
+              {filteredSteps.map((step, index) => {
+                const StepComponent = step.component
+                return <StepComponent key={step.id} stepNumber={index + 1} />
+              })}
 
               {/* Skip all */}
               <div className="flex w-full justify-end my-2">
