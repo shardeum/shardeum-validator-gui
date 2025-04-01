@@ -89,11 +89,11 @@ const Onboarding = () => {
   const { isConnected, address } = useAccount({
     onConnect: async (args) => {
       if (args?.address) {
-        // const balance = await fetchBalance({
-        //   address: args?.address,
-        //   chainId: CHAIN_ID,
-        // })
-        // setAccountBalance(`${balance?.formatted} ${balance?.symbol}`)
+        const balance = await fetchBalance({
+          address: args?.address,
+          chainId: CHAIN_ID,
+        })
+        setAccountBalance(`${balance?.formatted} ${balance?.symbol}`)
       }
     },
     onDisconnect: () => {
