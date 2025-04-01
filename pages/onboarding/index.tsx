@@ -40,7 +40,7 @@ type OnboardingStep = {
 }
 
 const MAINNET_CHAIN_ID = 8118
-const STAGENET_CHAIN_ID = 8081
+const STAGENET_CHAIN_ID = 8082
 
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
