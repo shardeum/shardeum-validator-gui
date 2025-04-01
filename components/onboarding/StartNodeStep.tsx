@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNodeStatus } from '../../hooks/useNodeStatus'
 import { CheckCircleIcon } from '@heroicons/react/24/solid'
+import { useAccount } from 'wagmi'
+import { useTokenClaimPhase } from '../../hooks/useTokenClaimPhase'
 
 interface StartNodeStepProps {
   stepNumber: number
@@ -9,6 +11,8 @@ interface StartNodeStepProps {
 export const StartNodeStep = ({ stepNumber }: StartNodeStepProps) => {
   const { nodeStatus, isLoading, startNode } = useNodeStatus()
   const [isNodeStarted, setIsNodeStarted] = useState(false)
+  const { isConnected } = useAccount()
+  const { tokenClaimPhase } = useTokenClaimPhase()
 
   useEffect(() => {
     if (nodeStatus?.state && nodeStatus.state !== 'stopped') {
@@ -18,9 +22,21 @@ export const StartNodeStep = ({ stepNumber }: StartNodeStepProps) => {
     }
   }, [nodeStatus?.state])
 
+  const isEnabled = isConnected && (tokenClaimPhase === -1 || tokenClaimPhase === 2)
+
   return (
     <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-      {!isNodeStarted && (
+      {!isEnabled && (
+        <div className="flex flex-col">
+          <div className="flex items-center gap-x-2">
+            <span className="flex items-center justify-center bg-gray-400 h-5 w-5 rounded-full text-white text-xs">
+              {stepNumber}
+            </span>
+            <span className="font-medium text-gray-400">Start your node</span>
+          </div>
+        </div>
+      )}
+      {isEnabled && !isNodeStarted && (
         <div className="flex flex-col">
           <div className="flex items-center gap-x-2 max-w-xl">
             <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
@@ -61,7 +77,7 @@ export const StartNodeStep = ({ stepNumber }: StartNodeStepProps) => {
           </div>
         </div>
       )}
-      {isNodeStarted && (
+      {isEnabled && isNodeStarted && (
         <>
           <div className="flex items-center gap-x-2 max-w-xl">
             <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />

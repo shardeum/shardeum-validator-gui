@@ -14,7 +14,15 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
   const { nodeStatus } = useNodeStatus()
   const [stakedAmount, setStakedAmount] = useState(0)
   const [isStakingComplete, setIsStakingComplete] = useState(false)
-  const isNodeStarted = nodeStatus?.state === 'active' || nodeStatus?.state === 'standby'
+  const [isNodeStarted, setIsNodeStarted] = useState(false)
+
+  useEffect(() => {
+    if (nodeStatus?.state && nodeStatus.state !== 'stopped') {
+      setIsNodeStarted(true)
+    } else {
+      setIsNodeStarted(false)
+    }
+  }, [nodeStatus?.state])
 
   const minimumStakeRequirement = useMemo(() => {
     return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
@@ -43,9 +51,11 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
     }
   }, [nodeStatus?.nomineeAddress, setNomineeAddress])
 
+  const isEnabled = isConnected && isNodeStarted
+
   return (
     <div className="bg-white w-full border p-3 shadow-md rounded-sm">
-      {(!isConnected || !isNodeStarted) && (
+      {!isEnabled && (
         <div className="flex flex-col">
           <div className="flex items-center gap-x-2">
             <span className="flex items-center justify-center bg-gray-400 h-5 w-5 rounded-full text-white text-xs">
@@ -55,7 +65,7 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
           </div>
         </div>
       )}
-      {isConnected && isNodeStarted && !isStakingComplete && (
+      {isEnabled && !isStakingComplete && (
         <div className="flex flex-col">
           <div className="flex items-center gap-x-2 max-w-xl">
             <span className="flex items-center justify-center h-5 w-5 bg-primary rounded-full text-white text-xs">
@@ -124,7 +134,7 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
           </div>
         </div>
       )}
-      {isConnected && isNodeStarted && isStakingComplete && (
+      {isEnabled && isStakingComplete && (
         <>
           <div className="flex items-center gap-x-2 max-w-xl">
             <CheckCircleIcon className="bg-white h-6 w-6 rounded-full text-xs text-green-700" />

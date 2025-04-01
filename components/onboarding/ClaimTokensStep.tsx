@@ -3,6 +3,7 @@ import { CHAIN_ID } from '../../pages/_app'
 import { CheckCircleIcon } from '@heroicons/react/24/solid'
 import { FAUCET_CLAIM_DOCS_URL } from '../../pages/onboarding'
 import { useEffect, useState } from 'react'
+import { useTokenClaimPhase } from '../../hooks/useTokenClaimPhase'
 
 interface ClaimTokensStepProps {
   stepNumber: number
@@ -11,13 +12,15 @@ interface ClaimTokensStepProps {
 export const ClaimTokensStep = ({ stepNumber }: ClaimTokensStepProps) => {
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
-  const [tokenClaimPhase, setTokenClaimPhase] = useState(0)
+  const { tokenClaimPhase, setTokenClaimPhase } = useTokenClaimPhase()
   const [accountBalance, setAccountBalance] = useState('')
 
   useEffect(() => {
-    const claimantAddress = localStorage.getItem('tokensClaimedBy')
-    setTokenClaimPhase(claimantAddress === address ? 2 : 0)
-  }, [address])
+    setTokenClaimPhase(0)
+    return () => {
+      setTokenClaimPhase(-1)
+    }
+  }, [])
 
   return (
     <div className="bg-white w-full border p-3 shadow-md rounded-sm">

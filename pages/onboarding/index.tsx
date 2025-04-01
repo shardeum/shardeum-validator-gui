@@ -33,7 +33,6 @@ type OnboardingStep = {
   id: string
   title: string
   description: string
-  isEnabled: boolean
   component: React.ComponentType<any>
   order: number
   excludedChain?: number[]
@@ -41,45 +40,6 @@ type OnboardingStep = {
 
 const MAINNET_CHAIN_ID = 8118
 const STAGENET_CHAIN_ID = 8082
-
-const ONBOARDING_STEPS: OnboardingStep[] = [
-  {
-    id: 'connect-wallet',
-    title: 'Connect your wallet',
-    description: 'Connect your wallet and switch to Shardeum Network.',
-    isEnabled: true,
-    component: WalletConnectStep,
-    order: 1,
-    excludedChain: [],
-  },
-  {
-    id: 'claim-tokens',
-    title: 'Claim testnet tokens from faucet',
-    description: 'Claim SHM tokens from Shardeum faucet as a reward.',
-    isEnabled: true,
-    component: ClaimTokensStep,
-    order: 2,
-    excludedChain: [MAINNET_CHAIN_ID, STAGENET_CHAIN_ID],
-  },
-  {
-    id: 'start-node',
-    title: 'Start your node',
-    description: 'Start your node to be a part of the validation network.',
-    isEnabled: true,
-    component: StartNodeStep,
-    order: 3,
-    excludedChain: [],
-  },
-  {
-    id: 'stake',
-    title: 'Stake your SHM',
-    description: 'Stake SHM to become a validator & earn rewards.',
-    isEnabled: true,
-    component: StakeStep,
-    order: 4,
-    excludedChain: [],
-  },
-]
 
 const Onboarding = () => {
   const [isNodeStarted, setIsNodeStarted] = useState(false)
@@ -100,6 +60,43 @@ const Onboarding = () => {
       setAccountBalance('')
     },
   })
+  const { chain } = useNetwork()
+
+  const ONBOARDING_STEPS: OnboardingStep[] = [
+    {
+      id: 'connect-wallet',
+      title: 'Connect your wallet',
+      description: 'Connect your wallet and switch to Shardeum Network.',
+      component: WalletConnectStep,
+      order: 1,
+      excludedChain: [],
+    },
+    {
+      id: 'claim-tokens',
+      title: 'Claim testnet tokens from faucet',
+      description: 'Claim SHM tokens from Shardeum faucet as a reward.',
+      component: ClaimTokensStep,
+      order: 2,
+      excludedChain: [MAINNET_CHAIN_ID, STAGENET_CHAIN_ID],
+    },
+    {
+      id: 'start-node',
+      title: 'Start your node',
+      description: 'Start your node to be a part of the validation network.',
+      component: StartNodeStep,
+      order: 3,
+      excludedChain: [],
+    },
+    {
+      id: 'stake',
+      title: 'Stake your SHM',
+      description: 'Stake SHM to become a validator & earn rewards.',
+      component: StakeStep,
+      order: 4,
+      excludedChain: [],
+    },
+  ]
+
   const [isStakingComplete, setIsStakingComplete] = useState(localStorage.getItem(onboardingCompletedKey) === 'true')
   const [stakedAmount, setStakedAmount] = useState(0)
   const [showSuccessScreen, setShowSuccessScreen] = useState(false)
@@ -111,8 +108,6 @@ const Onboarding = () => {
     const claimantAddress = localStorage.getItem(tokensClaimedByKey)
     setTokenClaimPhase(claimantAddress === address ? 2 : 0)
   }, [address])
-
-  const { chain } = useNetwork()
 
   useEffect(() => {
     setChainId(chain?.id || 0)
@@ -191,9 +186,7 @@ const Onboarding = () => {
   }, [isStaking])
 
   const filteredSteps = useMemo(() => {
-    return ONBOARDING_STEPS.filter((step) => step.isEnabled && !step.excludedChain?.includes(chainId)).sort(
-      (a, b) => a.order - b.order
-    )
+    return ONBOARDING_STEPS.filter((step) => !step.excludedChain?.includes(chainId)).sort((a, b) => a.order - b.order)
   }, [chainId])
 
   return (
