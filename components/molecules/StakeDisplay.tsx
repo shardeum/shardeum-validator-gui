@@ -1,5 +1,5 @@
 import { Card } from '../layouts/Card'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { useNodeStatus } from '../../hooks/useNodeStatus'
 import useModalStore from '../../hooks/useModalStore'
@@ -10,6 +10,8 @@ import { ConfirmUnstakeModal } from './ConfirmUnstakeModal'
 import { ClipboardIcon } from '../atoms/ClipboardIcon'
 import { MobileModalWrapper } from '../layouts/MobileModalWrapper'
 import { useAccountStakeInfo } from '../../hooks/useAccountStakeInfo'
+import { Constants } from '../../utils/constants'
+import { useLocalStorage } from '../../hooks/useLocalStorage'
 
 export const StakeDisplay = () => {
   const addressRef = useRef<HTMLSpanElement>(null)
@@ -23,6 +25,7 @@ export const StakeDisplay = () => {
     resetModal: state.resetModal,
   }))
   const [hasNodeStopped, setHasNodeStopped] = useState(false)
+  const [lastUnstake] = useLocalStorage(Constants.UNSTAKE_COOLDOWN_KEY, '0')
 
   useEffect(() => {
     if (nodeStatus?.state === 'stopped') {
@@ -49,9 +52,39 @@ export const StakeDisplay = () => {
     nodeStatus?.nomineeAddress != null &&
     stakeInfo?.nominee !== nodeStatus?.nomineeAddress
 
+  function calcCooldown() {
+    // use Date.now, config from stakeInfo.unstakeInterval and lastUnstake to calculate the cooldown
+    if (!stakeInfo || stakeInfo?.unstakeInterval == null || stakeInfo?.unstakeInterval <= 0) {
+      return 0
+    }
+    const lastUnstakeTime = lastUnstake ? parseInt(lastUnstake) : 0
+    const cooldown = stakeInfo.unstakeInterval - (Date.now() - lastUnstakeTime)
+    return cooldown > 0 ? cooldown : 0
+  }
+
+  const cooldown = calcCooldown()
+
   const isRemoveButtonDisabled =
     (!hasStakeOnDifferentNode && (!hasNodeStopped || !nodeStatus?.stakeState || !nodeStatus?.stakeState.unlocked)) ||
-    stakeForConnectedAddressOrNode === 0
+    stakeForConnectedAddressOrNode === 0 ||
+    cooldown > 0
+
+  function unstakeTooltip() {
+    if (hasNodeStopped) {
+      if (nodeStatus?.stakeState?.unlocked === false && nodeStatus?.stakeState?.remainingTime > 0) {
+        return `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(
+          nodeStatus.stakeState.remainingTime
+        )} before you can remove your stake.`
+      }
+
+      if (cooldown > 0) {
+        return `You have recently removed your stake. Please wait for another ${formatRemainingTime(
+          cooldown
+        )} before you can remove your stake.`
+      }
+    }
+    return 'It is not recommended to unstake while validating. If absolutely necessary, use the force remove option in settings to remove stake (Not Recommended).'
+  }
 
   return (
     <Card>
@@ -102,15 +135,7 @@ export const StakeDisplay = () => {
                         }
                         ${isRemoveButtonDisabled ? 'tooltip tooltip-bottom' : ''}
                       `}
-                      data-tip={
-                        hasNodeStopped &&
-                        nodeStatus?.stakeState?.unlocked === false &&
-                        nodeStatus?.stakeState?.remainingTime > 0
-                          ? `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(
-                              nodeStatus.stakeState.remainingTime
-                            )} before you can remove your stake.`
-                          : 'It is not recommended to unstake while validating. If absolutely necessary, use the force remove option in settings to remove stake (Not Recommended).'
-                      }
+                      data-tip={unstakeTooltip()}
                       disabled={isRemoveButtonDisabled}
                       onClick={() => {
                         resetModal()

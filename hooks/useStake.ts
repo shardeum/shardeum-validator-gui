@@ -1,8 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import { useTXLogs } from './useTXLogs'
-import { isMetaMaskError } from '../utils/isMetaMaskError'
-import { isEthersError } from '../utils/isEthersError'
 import { ExternalProvider } from '@ethersproject/providers'
 
 type useStakeProps = {
