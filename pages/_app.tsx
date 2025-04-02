@@ -28,7 +28,7 @@ function getErrorPage(page: ReactElement) {
 }
 
 export const RPC_URL =
-  process.env.NEXT_PUBLIC_RPC_URL ?? process.env.NEXT_PUBLIC_RPC_SERVER_URL ?? 'https://atomium.shardeum.org/'
+  (process.env.RPC_SERVER_URL || process.env.NEXT_PUBLIC_RPC_URL) ?? 'https://atomium.shardeum.org/'
 export const EXPLORER_URL = process.env.NEXT_PUBLIC_EXPLORER_URL ?? 'https://explorer-atomium.shardeum.org/'
 export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID ? +process.env.NEXT_PUBLIC_CHAIN_ID : 8082
 
