@@ -186,7 +186,7 @@ const Onboarding = () => {
   }, [isStaking])
 
   const filteredSteps = useMemo(() => {
-    return ONBOARDING_STEPS.filter((step) => !step.excludedChain?.includes(chainId)).sort((a, b) => a.order - b.order)
+    return ONBOARDING_STEPS.filter((step) => !step.excludedChain?.includes(CHAIN_ID)).sort((a, b) => a.order - b.order)
   }, [chainId])
 
   return (
