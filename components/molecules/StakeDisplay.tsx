@@ -63,6 +63,8 @@ export const StakeDisplay = () => {
   }
 
   const cooldown = calcCooldown()
+  const isStakeLocked = nodeStatus?.stakeState?.unlocked === false && nodeStatus?.stakeState?.remainingTime > 0
+  const isRestakeForbidden = nodeStatus?.stakeable?.restakeAllowed === false && nodeStatus?.stakeable?.remainingTime > 0
 
   const isRemoveButtonDisabled =
     (!hasStakeOnDifferentNode && (!hasNodeStopped || !nodeStatus?.stakeState || !nodeStatus?.stakeState.unlocked)) ||
@@ -71,7 +73,7 @@ export const StakeDisplay = () => {
 
   function unstakeTooltip() {
     if (hasNodeStopped) {
-      if (nodeStatus?.stakeState?.unlocked === false && nodeStatus?.stakeState?.remainingTime > 0) {
+      if (isStakeLocked) {
         return `Node is currently stopped and is being removed from the active validator list. Please wait for another ${formatRemainingTime(
           nodeStatus.stakeState.remainingTime
         )} before you can remove your stake.`
@@ -162,11 +164,11 @@ export const StakeDisplay = () => {
                     <button
                       className={
                         'px-3 py-2 rounded text-sm basis-0 grow max-w-[12rem] ' +
-                        (hasNodeStopped || !nodeStatus?.nomineeAddress
+                        (hasNodeStopped || !nodeStatus?.nomineeAddress || isRestakeForbidden
                           ? 'text-gray-400 border border-bodyFg'
                           : 'bg-primary text-white')
                       }
-                      disabled={hasNodeStopped || !nodeStatus?.nomineeAddress}
+                      disabled={hasNodeStopped || !nodeStatus?.nomineeAddress || isRestakeForbidden}
                       onClick={() => {
                         resetModal()
                         setContent(
@@ -194,6 +196,13 @@ export const StakeDisplay = () => {
               for the current node.
             </span>
           </div>
+        )}
+        {isRestakeForbidden && (
+            <div className={`flex gap-x-2 items-center px-4 py-2 bg-dangerBg border-gray-200 border-t`}>
+            <span className="bodyFg font-light text-xs ">
+              Restaking is on cooldown. Please wait for another {formatRemainingTime(nodeStatus?.stakeable?.remainingTime)} before you can add more stake.
+            </span>
+            </div>
         )}
       </>
     </Card>
