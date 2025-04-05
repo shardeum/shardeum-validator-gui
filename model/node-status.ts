@@ -13,6 +13,11 @@ export interface NodeStatus {
     reason: string
     remainingTime: number
   }
+  stakeable: {
+    reason: string
+    remainingTime: number
+    restakeAllowed: boolean
+  }
   stakeAddress: string
   stakeRequirement: string
   nominatorAddress: string
