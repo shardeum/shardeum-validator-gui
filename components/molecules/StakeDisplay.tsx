@@ -47,6 +47,10 @@ export const StakeDisplay = () => {
   }
 
   const stakeForConnectedAddressOrNode = parseFloat(stakeInfo?.stake?.trim() || nodeStatus?.lockedStake || '0')
+  const isConnectedToNonNominee =
+    nodeStatus?.nominatorAddress != null &&
+    nodeStatus.nominatorAddress !== '' &&
+    nodeStatus.nominatorAddress.toLowerCase() !== address?.toLowerCase()
   const hasStakeOnDifferentNode =
     parseFloat(stakeInfo?.stake ?? '0.0') > parseFloat('0.0') &&
     nodeStatus?.nomineeAddress != null &&
@@ -68,6 +72,7 @@ export const StakeDisplay = () => {
 
   const isRemoveButtonDisabled =
     (!hasStakeOnDifferentNode && (!hasNodeStopped || !nodeStatus?.stakeState || !nodeStatus?.stakeState.unlocked)) ||
+    (isConnectedToNonNominee && !hasStakeOnDifferentNode) ||
     stakeForConnectedAddressOrNode === 0 ||
     cooldown > 0
 
@@ -168,7 +173,9 @@ export const StakeDisplay = () => {
                           ? 'text-gray-400 border border-bodyFg'
                           : 'bg-primary text-white')
                       }
-                      disabled={hasNodeStopped || !nodeStatus?.nomineeAddress || isRestakeForbidden}
+                      disabled={
+                        hasNodeStopped || !nodeStatus?.nomineeAddress || isRestakeForbidden || isConnectedToNonNominee
+                      }
                       onClick={() => {
                         resetModal()
                         setContent(
@@ -198,11 +205,19 @@ export const StakeDisplay = () => {
           </div>
         )}
         {isRestakeForbidden && (
-            <div className={`flex gap-x-2 items-center px-4 py-2 bg-dangerBg border-gray-200 border-t`}>
+          <div className={`flex gap-x-2 items-center px-4 py-2 bg-dangerBg border-gray-200 border-t`}>
             <span className="bodyFg font-light text-xs ">
-              Restaking is on cooldown. Please wait for another {formatRemainingTime(nodeStatus?.stakeable?.remainingTime)} before you can add more stake.
+              Restaking is on cooldown. Please wait for another{' '}
+              {formatRemainingTime(nodeStatus?.stakeable?.remainingTime)} before you can add more stake.
             </span>
-            </div>
+          </div>
+        )}
+        {isConnectedToNonNominee && (
+          <div className={`flex gap-x-2 items-center px-4 py-2 bg-dangerBg border-gray-200 border-t`}>
+            <span className="bodyFg font-light text-xs ">
+              This wallet is not the current staker of this node.
+            </span>
+          </div>
         )}
       </>
     </Card>
