@@ -84,7 +84,7 @@ export const NodeStatusRibbon = () => {
         )
       ) {
         if (wasLoggedOut) {
-          setCurrentStatus(nodeStatus?.state || '')
+          setCurrentStatus(nodeStatus?.state || '', nodeStatus?.exitStatus, nodeStatus?.exitMessage)
           localStorage.removeItem(wasLoggedOutKey)
         }
       }
