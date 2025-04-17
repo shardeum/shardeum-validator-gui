@@ -170,7 +170,7 @@ export const NodeStatus = ({ isWalletConnected }: { isWalletConnected: boolean }
           nodeStatus?.state || ''
         )
       ) {
-        setCurrentStatus(nodeStatus?.state || '')
+        setCurrentStatus(nodeStatus?.state || '', nodeStatus?.exitStatus, nodeStatus?.exitMessage)
         localStorage.removeItem(wasLoggedOutKey)
       } else if (!wasLoggedOut) {
         setCurrentStatus('')
