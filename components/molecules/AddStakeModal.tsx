@@ -114,7 +114,7 @@ export const AddStakeModal = () => {
               min={minimumStakeRequirement}
               id={stakeInputId}
               ref={stakeInputRef}
-              placeholder="10"
+              placeholder={minimumStakeRequirement.toString()}
               className="outline-none flex-1 bg-white"
               disabled={isLoading}
               onChange={(e) => {
