@@ -96,7 +96,6 @@ export const OverviewSidebar: React.FC = () => {
                   className={
                     'rounded-full h-1 w-1 ' + (isValidatorUpdatePending ? 'bg-severeFg tooltip' : 'bg-successFg')
                   }
-                  data-tip={`Your validator version is out of date. Please update to the latest version (${version?.activeShardeumVersion})`}
                 ></div>
               </div>
               <span
