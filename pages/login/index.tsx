@@ -28,8 +28,6 @@ const Login = () => {
     }
   }
 
-  const { version } = useNodeVersion(true)
-
   return (
     <div className="flex flex-col h-screen justify-between relative">
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -69,12 +67,6 @@ const Login = () => {
               />
               <div className="flex flex-col justify-between h-full">
                 <LoginForm />
-                {!isMobile && (
-                  <div className="flex justify-between w-full">
-                    <span>Validator Version : {version?.runnningValidatorVersion}</span>
-                    <span>Running on Localhost</span>
-                  </div>
-                )}
               </div>
             </div>
           </main>

@@ -7,7 +7,6 @@ import greyLogo from '../../assets/grey-logo.svg'
 import useNotificationsStore, { NotificationSeverity, NotificationType } from '../../hooks/useNotificationsStore'
 
 const newGuiVersionAvailableKey = 'newGuiVersionAvailable'
-const newValidatorVersionAvailableKey = 'newValidatorVersionAvailable'
 
 const VERSION_UPDATE_REPOSITORY_URL =
   process.env.VERSION_UPDATE_REPOSITORY_URL ?? 'https://github.com/shardeum/validator-dashboard'
@@ -19,13 +18,9 @@ export const InformationPopupsDisplay = () => {
   const { version } = useNodeVersion()
 
   useEffect(() => {
-    const newGuiAvailable =
-      process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === 'false'
-        ? (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0)
-        : !version?.latestCliVersion?.includes('prerelease') &&
-          (version?.runningCliVersion || 0) < (version?.latestCliVersion || 0)
-
-    const newValidatorAvailable = (version?.runnningValidatorVersion || 0) < (version?.activeShardeumVersion || 0)
+    const newGuiAvailable = version?.currentImageDigest &&
+      version?.latestImageDigest &&
+      version?.currentImageDigest !== version?.latestImageDigest
 
     if (newGuiAvailable) {
       addNotification({
@@ -54,40 +49,10 @@ export const InformationPopupsDisplay = () => {
         })
       }
     }
-
-    if (newValidatorAvailable) {
-      addNotification({
-        type: NotificationType.VERSION_UPDATE,
-        severity: NotificationSeverity.ATTENTION,
-        title: 'New Validator version available',
-      })
-
-      const wasNewValidatorVersionPreviouslyAvailable = localStorage.getItem(newValidatorVersionAvailableKey) === 'true'
-      if (!wasNewValidatorVersionPreviouslyAvailable) {
-        // user viewing this for the first time
-        setShowValidatorUpdatePrompt(true)
-        localStorage.setItem(newValidatorVersionAvailableKey, 'true')
-        //TODO: if it's not in pending notifications, add it to pending notifications
-      }
-    } else {
-      const wasNewValidatorVersionPreviouslyAvailable = localStorage.getItem(newValidatorVersionAvailableKey) === 'true'
-      if (wasNewValidatorVersionPreviouslyAvailable) {
-        localStorage.removeItem(newValidatorVersionAvailableKey)
-        setShowValidatorUpdated(true)
-        setShowValidatorUpdatePrompt(false)
-        addNotification({
-          type: NotificationType.VERSION_UPDATE,
-          severity: NotificationSeverity.SUCCESS,
-          title: `Your validator version has been updated to Version: ${version?.runnningValidatorVersion}`,
-        })
-      }
-    }
   }, [version])
 
   const [showGuiUpdatePrompt, setShowGuiUpdatePrompt] = useState(false)
-  const [showValidatorUpdatePrompt, setShowValidatorUpdatePrompt] = useState(false)
   const [showGuiUpdated, setShowGuiUpdated] = useState(false)
-  const [showValidatorUpdated, setShowValidatorUpdated] = useState(false)
 
   const isOnboardingCompleted = localStorage.getItem(onboardingCompletedKey) === 'true'
 
@@ -125,45 +90,13 @@ export const InformationPopupsDisplay = () => {
         </div>
       )}
       {!showOnboardingPrompt && <span className="text-4xl font-semibold">Welcome Validator!</span>}
-      {showValidatorUpdatePrompt && (
-        <div className="w-full h-full shadow border border-attentionBorder bg-attentionBg rounded p-4">
-          <div className="flex flex-col">
-            <div className="flex flex-col">
-              <span className="font-semibold text-xs">New validator version available</span>
-              <span className="bodyFg font-light text-xs">
-                A new validator version (V {version?.activeShardeumVersion}) is available and ready to update.
-              </span>
-            </div>
-            <div className="flex justify-end gap-x-3 w-full mt-2">
-              <button
-                className="text-xs px-3 py-2"
-                onClick={() => {
-                  setShowValidatorUpdatePrompt(false)
-                }}
-              >
-                Dismiss
-              </button>
-              <Link
-                href={VERSION_UPDATE_REPOSITORY_URL}
-                onClick={() => {
-                  setShowValidatorUpdatePrompt(false)
-                }}
-                target="_blank"
-                className="flex justify-center items-center bg-white border border-gray-300 rounded text-xs font-semibold w-24 py-1"
-              >
-                Update
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-      {showGuiUpdatePrompt && (
+      {showGuiUpdatePrompt && version?.latestImageDigest && (
         <div className="w-full h-full shadow border border-attentionBorder bg-attentionBg rounded p-4">
           <div className="flex flex-col">
             <div className="flex flex-col">
               <span className="font-semibold text-xs">New GUI version available</span>
               <span className="bodyFg font-light text-xs">
-                A new GUI version (V {version?.latestCliVersion}) is available and ready to update.
+                A new GUI version (Image Digest: {version?.latestImageDigest}) is available and ready to update.
               </span>
             </div>
             <div className="flex justify-end gap-x-3 w-full mt-2">
@@ -185,28 +118,6 @@ export const InformationPopupsDisplay = () => {
               >
                 Update
               </Link>
-            </div>
-          </div>
-        </div>
-      )}
-      {showValidatorUpdated && (
-        <div className="w-full h-full shadow border border-successBorder bg-successBg rounded p-4">
-          <div className="flex flex-col">
-            <div className="flex flex-col">
-              <span className="font-semibold text-xs">Validator version has been updated</span>
-              <span className="bodyFg font-light text-xs">
-                Your validator has been updated to Version {version?.runnningValidatorVersion} and is ready to be used.
-              </span>
-            </div>
-            <div className="flex justify-end gap-x-3 w-full">
-              <button
-                className="text-xs px-3 py-2"
-                onClick={() => {
-                  setShowValidatorUpdated(false)
-                }}
-              >
-                Dismiss
-              </button>
             </div>
           </div>
         </div>
