@@ -8,4 +8,6 @@ export interface NodeVersion {
   runnningValidatorVersion: string
   minShardeumVersion: string
   activeShardeumVersion: string
+  currentImageDigest: string
+  latestImageDigest: string
 }

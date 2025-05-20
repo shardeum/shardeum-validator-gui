@@ -6,29 +6,7 @@ import { useNodeVersion } from '../../hooks/useNodeVersion'
 import { useRef, useState } from 'react'
 import { SupportDisplay } from '../molecules/SupportDisplay'
 import { NodeStatusUpdate } from '../atoms/NodeStatusUpdate'
-
-function compareVersions(version1?: string, version2?: string) {
-  if (!version1 || !version2) {
-    console.error('Invalid version string(s) provided:', {
-      version1,
-      version2,
-    })
-    return 0 // return 0 in this case to avoid falsly indicating a version mismatch when one of the versions is missing
-  }
-
-  const v1Parts = version1.split('.').map(Number)
-  const v2Parts = version2.split('.').map(Number)
-
-  for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
-    const v1Part = v1Parts[i] || 0 // Default to 0 if part is missing
-    const v2Part = v2Parts[i] || 0 // Default to 0 if part is missing
-
-    if (v1Part < v2Part) return -1
-    if (v1Part > v2Part) return 1
-  }
-
-  return 0 // Versions are equal
-}
+import { truncateMiddle } from '../../utils/truncateMiddle'
 
 export const OverviewSidebar: React.FC = () => {
   const renderCount = useRef(0)
@@ -39,12 +17,9 @@ export const OverviewSidebar: React.FC = () => {
   const [areSupportOptionsVisible, setAreSupportOptionsVisible] = useState(false)
 
   const isGuiUpdatePending =
-    process.env.NEXT_PUBLIC_IGNORE_PRERELEASE === 'false'
-      ? version?.runningCliVersion !== version?.latestCliVersion
-      : !version?.latestCliVersion.includes('prerelease') && version?.runningCliVersion !== version?.latestCliVersion
-
-  const isValidatorUpdatePending =
-    compareVersions(version?.runnningValidatorVersion, version?.minShardeumVersion) === -1
+    version?.currentImageDigest &&
+    version?.latestImageDigest &&
+    version?.currentImageDigest !== version?.latestImageDigest
 
   return (
     <div className="flex flex-col gap-y-16 scroll-smooth">
@@ -80,30 +55,30 @@ export const OverviewSidebar: React.FC = () => {
               </div>
               <span
                 className={`font-light text-xs ${isGuiUpdatePending ? 'tooltip' : ''}`}
-                data-tip={`Your GUI version is out of date. Please update to the latest version (${version?.latestCliVersion})`}
+                data-tip={`Your GUI version is out of date. Please update to the latest version (${version?.latestImageDigest})`}
               >
-                GUI Version <u>{version?.runningGuiVersion}</u>
+                Current Image Digest <u title={version?.currentImageDigest}>{truncateMiddle(version?.currentImageDigest, 12, 10)}</u>
               </span>
             </div>
             <div className="flex items-center gap-x-2">
               <div
                 className={
                   'rounded-full h-2 w-2 flex items-center justify-center ' +
-                  (isValidatorUpdatePending ? 'bg-severeBorder' : 'bg-successBorder')
+                  (isGuiUpdatePending ? 'bg-severeBorder' : 'bg-successBorder')
                 }
               >
                 <div
                   className={
-                    'rounded-full h-1 w-1 ' + (isValidatorUpdatePending ? 'bg-severeFg tooltip' : 'bg-successFg')
+                    'rounded-full h-1 w-1 ' + (isGuiUpdatePending ? 'bg-severeFg tooltip' : 'bg-successFg')
                   }
-                  data-tip={`Your validator version is out of date. Please update to the latest version (${version?.activeShardeumVersion})`}
+                  data-tip={`Your validator version is out of date. Please update to the latest version (${version?.latestImageDigest})`}
                 ></div>
               </div>
               <span
                 className={`font-light text-xs ${isGuiUpdatePending ? 'tooltip' : ''}`}
-                data-tip={`Your Validator version is out of date. Please update to the latest version (${version?.activeShardeumVersion})`}
+                data-tip={`Your Validator version is out of date. Please update to the latest version (${version?.latestImageDigest})`}
               >
-                Validator Version <u>{version?.runnningValidatorVersion}</u>
+                Latest Image Digest <u title={version?.latestImageDigest}>{truncateMiddle(version?.latestImageDigest, 12, 10)}</u>
               </span>
             </div>
           </div>
