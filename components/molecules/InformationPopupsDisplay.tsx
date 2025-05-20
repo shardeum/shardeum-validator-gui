@@ -9,7 +9,7 @@ import useNotificationsStore, { NotificationSeverity, NotificationType } from '.
 const newGuiVersionAvailableKey = 'newGuiVersionAvailable'
 
 const VERSION_UPDATE_REPOSITORY_URL =
-  process.env.VERSION_UPDATE_REPOSITORY_URL ?? 'https://github.com/shardeum/validator-dashboard'
+  process.env.VERSION_UPDATE_REPOSITORY_URL ?? 'https://docs.shardeum.org/docs/node/run/validator/setup/self-host#update'
 
 export const InformationPopupsDisplay = () => {
   const { addNotification } = useNotificationsStore((state: any) => ({
