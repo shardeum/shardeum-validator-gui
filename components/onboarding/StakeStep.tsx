@@ -25,7 +25,7 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
   }, [nodeStatus?.state])
 
   const minimumStakeRequirement = useMemo(() => {
-    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
+    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '—.—') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
 
   const {
@@ -126,7 +126,7 @@ export const StakeStep = ({ stepNumber }: StakeStepProps) => {
                 <div className="flex justify-between">
                   <div className={`text-xs ${stakedAmount < minimumStakeRequirement ? 'text-dangerFg' : ''}`}>
                     <span>Minimum stake requirement: </span>
-                    <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
+                    <span className="font-semibold">{nodeStatus?.stakeRequirement || '—.—'} SHM</span>
                   </div>
                 </div>
               </div>

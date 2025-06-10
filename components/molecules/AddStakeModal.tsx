@@ -31,7 +31,7 @@ export const AddStakeModal = () => {
   const stakeInputRef = useRef<HTMLInputElement>(null)
   const [stakedAmount, setStakedAmount] = useState(0)
   const minimumStakeRequirement = useMemo(() => {
-    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
+    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '—.—') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
 
   // Use wallet balance hook for fetching balance
@@ -135,7 +135,7 @@ export const AddStakeModal = () => {
             <div className="flex justify-between">
               <div className={'text-xs ' + (stakedAmount < minimumStakeRequirement ? 'text-dangerFg' : 'text-black')}>
                 <span>Minimum stake requirement: </span>
-                <span className="font-semibold">{nodeStatus?.stakeRequirement || '10'} SHM</span>
+                <span className="font-semibold">{nodeStatus?.stakeRequirement || '—.—'} SHM</span>
               </div>
               {(balanceData || data) && (
                 <div className="text-xs">
