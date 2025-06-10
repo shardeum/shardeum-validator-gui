@@ -119,7 +119,7 @@ const Onboarding = () => {
   const { disconnect } = useDisconnect()
   const { nodeStatus, isLoading, startNode } = useNodeStatus()
   const minimumStakeRequirement = useMemo(() => {
-    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '10') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
+    return Math.max(parseFloat(nodeStatus?.stakeRequirement || '—.—') - parseFloat(nodeStatus?.lockedStake || '0'), 0)
   }, [nodeStatus?.stakeRequirement, nodeStatus?.lockedStake])
 
   const {

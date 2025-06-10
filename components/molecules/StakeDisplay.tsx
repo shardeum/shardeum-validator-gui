@@ -101,7 +101,7 @@ export const StakeDisplay = () => {
             <span className="text-lg md:text-xl font-semibold">{stakeForConnectedAddressOrNode.toFixed(2)} SHM</span>
             <div className="flex gap-x-1 items-center">
               <span className="text-xs font-light">Min. requirement: </span>
-              <span className="text-sm">{nodeStatus?.stakeRequirement || '10'} SHM</span>
+              <span className="text-sm">{nodeStatus?.stakeRequirement || '—.—'} SHM</span>
             </div>
           </div>
           <hr className="my-1 mx-3" />
@@ -214,9 +214,7 @@ export const StakeDisplay = () => {
         )}
         {isConnectedToNonNominee && (
           <div className={`flex gap-x-2 items-center px-4 py-2 bg-dangerBg border-gray-200 border-t`}>
-            <span className="bodyFg font-light text-xs ">
-              This wallet is not the current staker of this node.
-            </span>
+            <span className="bodyFg font-light text-xs ">This wallet is not the current staker of this node.</span>
           </div>
         )}
       </>
