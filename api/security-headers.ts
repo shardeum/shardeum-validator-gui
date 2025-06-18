@@ -56,11 +56,13 @@ export function cacheStaticFiles(req: Request, res: Response, next: NextFunction
 
 export function preventBrowserCacheForDynamicContent(req: Request, res: Response, next: NextFunction) {
   // Call the next middleware or route handler
-  next()
-
-  // Set caching headers based on the Content-Type header
-  const contentType = res.get('Content-Type')
-  if (contentType && contentType.startsWith('application/json')) {
+  const originalJson = res.json.bind(res)
+  res.json = function(data: any) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
+    return originalJson(data)
   }
+  
+  next()
 }
