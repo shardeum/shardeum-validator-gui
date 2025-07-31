@@ -11,11 +11,12 @@ import { Address } from 'wagmi'
 import { ExternalProvider } from '@ethersproject/providers'
 import { NodeStatus } from '../model/node-status'
 import { useSettings } from '../hooks/useSettings'
+import { useNodeStatus } from '../hooks/useNodeStatus'
 
 export default function RemoveStakeButton({
   nominee,
   force = false,
-  nodeStatus,
+  nodeStatus: nodeState,
 }: {
   nominee: string
   force?: boolean
@@ -25,6 +26,7 @@ export default function RemoveStakeButton({
   const { writeUnstakeLog } = useTXLogs()
   const { openModal } = useContext(ConfirmModalContext)
   const { settings, mutate: mutateSettings } = useSettings()
+  const { nodeStatus } = useNodeStatus()
   const ethereum = window.ethereum
 
   const createUnstakeLog = (data: unknown, params: { data: unknown }, hash: string, sender: string) => {
@@ -88,6 +90,8 @@ export default function RemoveStakeButton({
         (isEthersError(error) && error.code === 'ACTION_REJECTED')
       ) {
         errorMessage = 'Transaction rejected by user'
+      } else if (isEthersError(error) && error.code === 'CALL_EXCEPTION') {
+        errorMessage = 'Transaction failed: Your node may still be in the deregistration process. Please wait for deregistration to complete before unstaking.'
       }
       showErrorDetails(errorMessage)
     }
@@ -139,6 +143,17 @@ export default function RemoveStakeButton({
 
   async function removeStake() {
     setLoading(true)
+
+    // Check if deregistration is in progress (unless forcing)
+    if (!force && nodeStatus?.stakeState && !nodeStatus.stakeState.unlocked) {
+      const remainingMinutes = Math.ceil(nodeStatus.stakeState.remainingTime / 60000)
+      showErrorDetails(
+        `Cannot unstake: ${nodeStatus.stakeState.reason} Please wait ${remainingMinutes} more minutes before attempting to unstake.`
+      )
+      setLoading(false)
+      return
+    }
+
     await connectWallet()
   }
 
@@ -182,10 +197,10 @@ export default function RemoveStakeButton({
               isLoading={isLoading}
               disabled={
                 !force &&
-                (nodeStatus === 'waiting-for-network' ||
-                  nodeStatus === 'standby' ||
-                  nodeStatus === 'syncing' ||
-                  nodeStatus === 'active')
+                (nodeState === 'waiting-for-network' ||
+                  nodeState === 'standby' ||
+                  nodeState === 'syncing' ||
+                  nodeState === 'active')
               }
               onClick={() => handleRemoveStake()}
             >

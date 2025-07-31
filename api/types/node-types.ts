@@ -13,6 +13,16 @@ export type NodeStatus = {
   currentRewards: string
   lastPayout: string
   lifetimeEarnings: string
+  stakeState?: {
+    reason: string
+    remainingTime: number
+    unlocked: boolean
+  }
+  stakeable?: {
+    reason: string
+    remainingTime: number
+    restakeAllowed: boolean
+  }
   nodeInfo: {
     externalIp: string
     externalPort: number
