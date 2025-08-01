@@ -10,6 +10,7 @@ import { showErrorMessage, showSuccessMessage } from './useToastStore'
 import { Constants } from '../utils/constants'
 import { useLocalStorage } from './useLocalStorage'
 import { useNodeStatus } from './useNodeStatus'
+import { validateUnstakeEligibility } from '../utils/unstakeValidation'
 
 type useStakeProps = {
   nominator: string
@@ -121,12 +122,9 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
   const handleRemoveStake = async () => {
     setLoading(true)
 
-    // Check if deregistration is in progress (unless forcing)
-    if (!force && nodeStatus?.stakeState && !nodeStatus.stakeState.unlocked) {
-      const remainingMinutes = Math.ceil(nodeStatus.stakeState.remainingTime / 60000)
-      showErrorMessage(
-        `Cannot unstake: ${nodeStatus.stakeState.reason} Please wait ${remainingMinutes} more minutes before attempting to unstake.`
-      )
+    const validation = validateUnstakeEligibility(force, nodeStatus)
+    if (!validation.canUnstake) {
+      showErrorMessage(validation.errorMessage!)
       setLoading(false)
       return false
     }

@@ -26,7 +26,9 @@ const notificationsKey = 'pendingNotifications'
 
 const persistNotifications = (notifications: NotificationInstance[]) => {
   try {
-    window.localStorage.setItem(notificationsKey, JSON.stringify(notifications))
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(notificationsKey, JSON.stringify(notifications))
+    }
   } catch (error) {
     console.log(error)
   }
@@ -34,10 +36,14 @@ const persistNotifications = (notifications: NotificationInstance[]) => {
 
 const fetchPreviousNotifications = () => {
   try {
-    const notificationsItem = window.localStorage.getItem(notificationsKey)
-    return notificationsItem ? JSON.parse(notificationsItem) : []
+    if (typeof window !== 'undefined') {
+      const notificationsItem = window.localStorage.getItem(notificationsKey)
+      return notificationsItem ? JSON.parse(notificationsItem) : []
+    }
+    return []
   } catch (error) {
     console.log(error)
+    return []
   }
 }
 

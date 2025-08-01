@@ -12,6 +12,7 @@ import { ExternalProvider } from '@ethersproject/providers'
 import { NodeStatus } from '../model/node-status'
 import { useSettings } from '../hooks/useSettings'
 import { useNodeStatus } from '../hooks/useNodeStatus'
+import { validateUnstakeEligibility } from '../utils/unstakeValidation'
 
 export default function RemoveStakeButton({
   nominee,
@@ -144,12 +145,9 @@ export default function RemoveStakeButton({
   async function removeStake() {
     setLoading(true)
 
-    // Check if deregistration is in progress (unless forcing)
-    if (!force && nodeStatus?.stakeState && !nodeStatus.stakeState.unlocked) {
-      const remainingMinutes = Math.ceil(nodeStatus.stakeState.remainingTime / 60000)
-      showErrorDetails(
-        `Cannot unstake: ${nodeStatus.stakeState.reason} Please wait ${remainingMinutes} more minutes before attempting to unstake.`
-      )
+    const validation = validateUnstakeEligibility(force, nodeStatus)
+    if (!validation.canUnstake) {
+      showErrorDetails(validation.errorMessage!)
       setLoading(false)
       return
     }
