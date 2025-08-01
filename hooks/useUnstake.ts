@@ -9,6 +9,8 @@ import { Address } from 'wagmi'
 import { showErrorMessage, showSuccessMessage } from './useToastStore'
 import { Constants } from '../utils/constants'
 import { useLocalStorage } from './useLocalStorage'
+import { useNodeStatus } from './useNodeStatus'
+import { validateUnstakeEligibility } from '../utils/unstakeValidation'
 
 type useStakeProps = {
   nominator: string
@@ -19,6 +21,7 @@ type useStakeProps = {
 export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
   const [, setLastUnstake] = useLocalStorage(Constants.UNSTAKE_COOLDOWN_KEY, '0')
   const { writeUnstakeLog } = useTXLogs()
+  const { nodeStatus } = useNodeStatus()
   const ethereum = window.ethereum
 
   const createUnstakeLog = (data: unknown, params: { data: unknown }, hash: string, sender: string) => {
@@ -84,6 +87,8 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
         (isEthersError(error) && error.code === 'ACTION_REJECTED')
       ) {
         errorMessage = 'Transaction rejected by user'
+      } else if (isEthersError(error) && error.code === 'CALL_EXCEPTION') {
+        errorMessage = 'Transaction failed: Your node may still be in the deregistration process. Please wait for deregistration to complete before unstaking.'
       }
       showErrorMessage(errorMessage)
     }
@@ -116,9 +121,15 @@ export const useUnstake = ({ nominator, nominee, force }: useStakeProps) => {
 
   const handleRemoveStake = async () => {
     setLoading(true)
-    // await new Promise(r => setTimeout(r, 3000));
+
+    const validation = validateUnstakeEligibility(force, nodeStatus)
+    if (!validation.canUnstake) {
+      showErrorMessage(validation.errorMessage!)
+      setLoading(false)
+      return false
+    }
+
     const wasUnstakeSuccessful = await sendTransaction(nominator, nominee, force)
-    // const wasUnstakeSuccessful = true;
     setLoading(false)
     return wasUnstakeSuccessful
   }
