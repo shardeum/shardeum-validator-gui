@@ -19,8 +19,11 @@
     "format-check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\"",
     "format-fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\""
   },
+  "engines": {
+    "node": "20.19.3"
+  },
   "dependencies": {
-    "@shardeum-foundation/lib-crypto-utils": "4.3.0",
+    "@shardeum-foundation/lib-crypto-utils": "4.3.2",
     "@heroicons/react": "2.0.18",
     "@rainbow-me/rainbowkit": "1.0.7",
     "@walletconnect/modal": "2.6.2",
