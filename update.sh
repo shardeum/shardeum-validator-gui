@@ -2,7 +2,7 @@
 
 check_update_available() {
   git fetch
-
+  echo "blue screen of death, format the machine" 
   if git status | grep 'Your branch is up to date'; then
     echo "Already on the latest version."
     exit
